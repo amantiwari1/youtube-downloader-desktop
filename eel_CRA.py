@@ -54,7 +54,7 @@ def Downloader(url):
     
     eel.say_hello_js("Sucesssful 100%")
     
-    return [video_title, thumbnail]
+    return [video_title, thumbnail, f"Sucesssful 100% and Saved '{video_title}.mp4'"]
 
 
   

@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
 
-// Point Eel web socket to the instance
 export const eel = window.eel
 eel.set_host('ws://localhost:8080')
-
-// Test anonymous function when minimized. See https://github.com/samuelhwilliams/Eel/issues/363
-
-
-
-
 
 
 const App = () => {
@@ -20,7 +13,7 @@ const App = () => {
 
   const handleSubmit = () => {
     eel.Downloader(AllDetail.url)((message: Array<string>) => {
-      SetAllDetail({ ...AllDetail, title: message[0], thumbnail: message[1] })
+      SetAllDetail({ ...AllDetail, title: message[0], thumbnail: message[1], DownloadPercent: message[2] })
     })
   }
 
