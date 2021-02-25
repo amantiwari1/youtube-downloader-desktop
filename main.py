@@ -9,6 +9,7 @@ import eel
 import json
 import time
 import urllib.request
+from backend import GetDetails 
 
 def is_url(url):
   try:
@@ -52,7 +53,7 @@ def Downloader(url):
 
     urllib.request.urlretrieve(urlvideo, f'{video_title}.mp4', show_progress) 
     
-    eel.say_hello_js("Sucesssful 100%")
+    
     
     return [video_title, thumbnail, f"Sucesssful 100% and Saved '{video_title}.mp4'"]
 

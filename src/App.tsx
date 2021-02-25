@@ -7,6 +7,7 @@ eel.set_host('ws://localhost:8080')
 
 const App = () => {
 
+
   const [AllDetail, SetAllDetail] = useState({ url: "", title: "", thumbnail: "" , DownloadPercent: ""})
 
   
@@ -18,10 +19,11 @@ const App = () => {
   }
 
 
-  eel.expose(say_hello_js);               // Expose this function to Python
-  function say_hello_js(text: string) {
+  function sayHelloJS(text: string) {
     SetAllDetail({ ...AllDetail, DownloadPercent: text  })
   }
+
+  window.eel.expose( sayHelloJS, 'say_hello_js' )
 
 
   return (
