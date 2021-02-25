@@ -12,6 +12,7 @@
 /build
 /dist
 /pip
+/video
 
 # misc
 .DS_Store

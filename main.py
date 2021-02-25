@@ -1,65 +1,49 @@
-"""Main Python application file for the EEL-CRA demo."""
 import os
 import platform
-import random
-import sys
-import youtube_dl
-from urllib.parse import urlparse
 import eel
-import json
-import time
-import urllib.request
+from backend import youtube
 
-def is_url(url):
-  try:
-    result = urlparse(url)
-    return all([result.scheme, result.netloc])
-  except ValueError:
-    return False
 
-percent = None
 
-def show_progress(block_num, block_size, total_size):
+
+def send_progress(block_num, block_size, total_size):
     video_size = total_size/block_size 
     percent = int((block_num / video_size) * 100)
-    eel.say_hello_js(f"Downloding ... {percent} %") 
+    eel.Set_Download_Percent(f"Downloding... {percent} %") 
+    if percent == 100:
+        eel.Set_Download_Percent(f"Success... 100%") 
+
 
 
 
 
 @eel.expose
 def Downloader(url):
-    if not is_url(url):
+    if not youtube.Check_Url(url):
         return ["Wrong link" , ""]
 
-    ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
-    with ydl:
-        result = ydl.extract_info(url,download=False )
-    if 'entries' in result:
-        video = result['entries'][0]
-    else:
-        video = result
+    data = youtube.Get_Data_Details(url)
 
-    video_title = video['title']
-    thumbnail = video['thumbnail']
+    video_title = data['title']
+    thumbnail = data['thumbnail']
 
-    for i in video["formats"]:
-        if i["format_note"] == "360p":
-            print(i["format_note"])
-            urlvideo = i["url"]
-            filesize = i["filesize"]
-            break
+    urlvideo, filesize = youtube.Get_Url_Video_Quality_and_Filesize(
+        getDataFormat=data["formats"],
+        quality="360p"
+    )
 
-    urllib.request.urlretrieve(urlvideo, f'{video_title}.mp4', show_progress) 
     
+
     
-    
-    return [video_title, thumbnail, f"Sucesssful 100% and Saved '{video_title}.mp4'"]
+    return [video_title, thumbnail, f"Sucesssful 100% and Saved '{video_title}.mp4'",filesize, urlvideo ]
 
-
-  
-
-
+@eel.expose
+def Download_video(detail, send_progress=send_progress):
+    youtube.Download_Video(
+        urlvideo=detail["urlvideo"],
+        filename=f"{detail['title']}",
+        send_progress=send_progress
+    )
 
 
 def start_eel(develop):
@@ -73,7 +57,6 @@ def start_eel(develop):
         directory = 'build'
         app = 'chrome'
         page = 'index.html'
-
     eel.init(directory, ['.tsx', '.ts', '.jsx', '.js', '.html'])
 
 

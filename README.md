@@ -6,14 +6,12 @@
 
 - [07 - Youtube Downloader GUI Documentation](#07---youtube-downloader-gui-documentation)
   - [Quick Start](#quick-start)
-  - [About](#about)
+  - [Installation](#installation)
   - [Main Files](#main-files)
 
 <!-- /TOC -->
 
 # 07 - Youtube Downloader GUI Documentation
-
-
 
 ## Quick Start
 
@@ -22,13 +20,18 @@
 3. **Distribute:** (Run `yarn build` first) Build a binary distribution with PyInstaller using `python -m eel main.py build --onefile` (See more detailed PyInstaller instructions at bottom of [the main README](https://github.com/ChrisKnott/Eel))
 4. **Develop:** Open two prompts. In one, run  `python main.py true` and the other, `yarn start`. A browser window should open in your default web browser at: [http://localhost:3000/](http://localhost:3000/). As you make changes to the JavaScript in `src/` the browser will reload. Any changes to `main.py` will require a restart to take effect. You may need to refresh the browser window if it gets out of sync with eel.
 
+## Installation
+ 
+```shell
+python -m venv pip
 
+.\pip\Scripts\activate
 
-## About
+python install -r requirement.txt
 
-> Use `window.eel.expose(func, 'func')` to circumvent `npm run build` code mangling
+yarn install
+```
 
-`yarn build` will rename variables and functions to minimize file size renaming `eel.expose(funcName)` to something like `D.expose(J)`. The renaming breaks Eel's static JS-code analyzer, which uses a regular expression to look for `eel.expose(*)`. To fix this issue, in your JS code, convert all `eel.expose(funcName)` to `window.eel(funcName, 'funcName')`. This workaround guarantees that 'funcName' will be available to call from Python.
 
 ## Main Files
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import { Card } from './components/Card'
 
 export const eel = window.eel
 eel.set_host('ws://localhost:8080')
@@ -8,22 +9,21 @@ eel.set_host('ws://localhost:8080')
 const App = () => {
 
 
-  const [AllDetail, SetAllDetail] = useState({ url: "", title: "", thumbnail: "" , DownloadPercent: ""})
+  const [AllDetail, SetAllDetail] = useState({ url: "", title: "", thumbnail: "", DownloadPercent: "", filesize: 0, VideoUrl: "" })
 
-  
+
 
   const handleSubmit = () => {
-    eel.Downloader(AllDetail.url)((message: Array<string>) => {
-      SetAllDetail({ ...AllDetail, title: message[0], thumbnail: message[1], DownloadPercent: message[2] })
+    window.eel.Downloader(AllDetail.url)((message: any) => {
+      SetAllDetail({ ...AllDetail, title: message[0], thumbnail: message[1], DownloadPercent: message[2], filesize: message[3], VideoUrl: message[4] })
     })
   }
 
-
-  function sayHelloJS(text: string) {
-    SetAllDetail({ ...AllDetail, DownloadPercent: text  })
+  function Set_Download_Percent(text: string) {
+    SetAllDetail({ ...AllDetail, DownloadPercent: text })
   }
 
-  window.eel.expose( sayHelloJS, 'say_hello_js' )
+  window.eel.expose(Set_Download_Percent, 'Set_Download_Percent')
 
 
   return (
@@ -37,11 +37,18 @@ const App = () => {
           <button type='button' onClick={handleSubmit} >Get The youtube Detail</button>
         </form>
         <br />
-        {
-          AllDetail.thumbnail && <img src={AllDetail.thumbnail} height="200" alt="thumbnail" />
-        }
-        <p>{AllDetail.title}</p>
         <p>{AllDetail.DownloadPercent}</p>
+
+        {
+          AllDetail.title &&  <Card
+          title={AllDetail.title}
+          thumbnail={AllDetail.thumbnail}
+          downloadUrl={AllDetail.VideoUrl}
+          filesize={AllDetail.filesize}
+          viewUrl={AllDetail.url}
+        >
+        </Card>
+          }
       </header>
     </div>
   );
