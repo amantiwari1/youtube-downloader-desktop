@@ -9,7 +9,6 @@ import eel
 import json
 import time
 import urllib.request
-from backend import GetDetails 
 
 def is_url(url):
   try:
