@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 import urllib.request
 import os
 import string
+import re
 
 
 
@@ -17,10 +18,17 @@ def Get_Data_Details(url):
 
 # get list of video quality
 def Get_Detail_Quality_Available(getDataFormat):
+    def atoi(text):
+        return int(text) if text.isdigit() else text
+
+    def natural_keys(text):
+        return [ atoi(c) for c in re.split('(\d+)',text) ]
+        
     list_of_format = []
     for format in getDataFormat:
         list_of_format.append(format["format_note"])
-    return list(set(list_of_format))
+    return sorted(list(set(list_of_format)), key=natural_keys)
+
 
 
 
