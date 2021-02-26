@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './App.css';
 import { Card } from './components/Card'
 
 export const eel = window.eel
@@ -9,13 +8,31 @@ eel.set_host('ws://localhost:8080')
 const App = () => {
 
 
-  const [AllDetail, SetAllDetail] = useState({ url: "", title: "", thumbnail: "", DownloadPercent: "", filesize: 0, VideoUrl: "" })
+  const [AllDetail, SetAllDetail] = useState({
+    url: "",
+    title: "",
+    thumbnail: "",
+    DownloadPercent: "",
+    list_Of_formats: [],
+    formats: {},
+    filesize: 0,
+    videourl: ""
+  })
 
 
 
   const handleSubmit = () => {
     window.eel.Downloader(AllDetail.url)((message: any) => {
-      SetAllDetail({ ...AllDetail, title: message[0], thumbnail: message[1], DownloadPercent: message[2], filesize: message[3], VideoUrl: message[4] })
+      Set_Download_Percent("...")
+      SetAllDetail({
+        ...AllDetail,
+        title: message.title,
+        thumbnail: message.thumbnail,
+        list_Of_formats: message.list_Of_formats,
+        formats: message.formats,
+        filesize: message.filesize,
+        videourl: message.videourl
+      })
     })
   }
 
@@ -40,17 +57,19 @@ const App = () => {
         <p>{AllDetail.DownloadPercent}</p>
 
         {
-          AllDetail.title &&  <Card
-          title={AllDetail.title}
-          thumbnail={AllDetail.thumbnail}
-          downloadUrl={AllDetail.VideoUrl}
-          filesize={AllDetail.filesize}
-          viewUrl={AllDetail.url}
-        >
-        </Card>
-          }
+          AllDetail.title && <Card
+            title={AllDetail.title}
+            thumbnail={AllDetail.thumbnail}
+            viewUrl={AllDetail.url}
+            list_Of_formats={AllDetail.list_Of_formats}
+            formats={AllDetail.formats}
+            filesize={AllDetail.filesize}
+            videourl={AllDetail.videourl}
+          >
+          </Card>
+        }
       </header>
-    </div>
+    </div >
   );
 
 }
