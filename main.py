@@ -4,38 +4,47 @@ import eel
 from backend import youtube
 
 
-
-
 def send_progress(block_num, block_size, total_size):
-    video_size = total_size/block_size 
+    video_size = total_size/block_size
     percent = int((block_num / video_size) * 100)
-    eel.Set_Download_Percent(f"Downloding... {percent} %") 
-    if percent == 100:
-        eel.Set_Download_Percent(f"Success... 100%") 
-
-
-
+    eel.Set_Download_Percent(f"Downloding... {percent} %")
+    if percent >= 100:
+        eel.Set_Download_Percent(f"Success... 100%")
 
 
 @eel.expose
 def Downloader(url):
     if not youtube.Check_Url(url):
-        return ["Wrong link" , ""]
+        return ["Wrong link", ""]
 
     data = youtube.Get_Data_Details(url)
 
-    video_title = data['title']
+    title = data['title']
     thumbnail = data['thumbnail']
+    formats = data["formats"]
 
-    urlvideo, filesize = youtube.Get_Url_Video_Quality_and_Filesize(
-        getDataFormat=data["formats"],
-        quality="360p"
+    list_Of_formats = youtube.Get_Detail_Quality_Available(
+        getDataFormat=formats
     )
 
+    for format in formats:
+        if list_Of_formats[0] == format["format_note"]:
+            filesize = format["filesize"]
+            videourl = format["url"]
+            break
     
+    eel.Set_Download_Percent(f"   ")
 
-    
-    return [video_title, thumbnail, f"Sucesssful 100% and Saved '{video_title}.mp4'",filesize, urlvideo ]
+
+    return {
+        "title": title,
+        "thumbnail": thumbnail,
+        "list_Of_formats": list_Of_formats,
+        "formats": formats,
+        "filesize": filesize,
+        "videourl": videourl
+    }
+
 
 @eel.expose
 def Download_video(detail, send_progress=send_progress):
@@ -58,10 +67,6 @@ def start_eel(develop):
         app = 'chrome'
         page = 'index.html'
     eel.init(directory, ['.tsx', '.ts', '.jsx', '.js', '.html'])
-
-
-
-        
 
     eel_kwargs = dict(
         host='localhost',
