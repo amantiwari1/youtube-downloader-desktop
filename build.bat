@@ -1,2 +1,2 @@
 
-python -m eel main.py build --onefile --noconsole
+python -m eel main.py build --onedir  --windowed --noconfirm
