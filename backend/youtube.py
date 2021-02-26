@@ -2,6 +2,7 @@ import youtube_dl
 from urllib.parse import urlparse
 import urllib.request
 import os
+import string
 
 
 
@@ -19,7 +20,7 @@ def Get_Detail_Quality_Available(getDataFormat):
     list_of_format = []
     for format in getDataFormat:
         list_of_format.append(format["format_note"])
-    return set(list_of_format)
+    return list(set(list_of_format))
 
 
 
@@ -51,13 +52,28 @@ def Download_Video(urlvideo, filename, send_progress):
         os.mkdir(path)
 
     try:
-        urllib.request.urlretrieve(urlvideo, f'video\{filename}.mp4', send_progress)
+        urllib.request.urlretrieve(urlvideo, f'video\{format_filename(filename)}.mp4', send_progress)
     except ValueError:
         return False
 
     return True
 
 
+def format_filename(s):
+    """Take a string and return a valid filename constructed from the string.
+Uses a whitelist approach: any characters not present in valid_chars are
+removed. Also spaces are replaced with underscores.
+ 
+Note: this method may produce invalid filenames such as ``, `.` or `..`
+When I use this method I prepend a date string like '2009_01_15_19_46_32_'
+and append a file extension like '.txt', so I avoid the potential of using
+an invalid filename.
+ 
+"""
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    filename = ''.join(c for c in s if c in valid_chars)
+    filename = filename.replace(' ','_') # I don't like spaces in filenames.
+    return filename
 
 
 
