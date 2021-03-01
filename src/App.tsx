@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Card } from './components/Card'
 
+
+// this is eel 
 export const eel = window.eel
+// talk to python and javscript
 eel.set_host('ws://localhost:8080')
 
 
 const App = () => {
 
-
+  //  this is useState
   const [AllDetail, SetAllDetail] = useState({
     url: "",
     title: "",
@@ -19,11 +22,15 @@ const App = () => {
     videourl: ""
   })
 
-
-
+  
   const handleSubmit = () => {
+
+
+    // this function come from python line 17 in main.py 
+    // then call this function then it will run in python
+    // after it will get all details of youtube a video 
+    // through 'message'  and all details stored value to AllDetails 
     window.eel.Downloader(AllDetail.url)((message: any) => {
-      Set_Download_Percent("...")
       SetAllDetail({
         ...AllDetail,
         title: message.title,
@@ -36,10 +43,13 @@ const App = () => {
     })
   }
 
+  // this function to set download percent like downlaoding 50% ...  
   function Set_Download_Percent(text: string) {
     SetAllDetail({ ...AllDetail, DownloadPercent: text })
   }
 
+  // this Set_Download_Percent will be sent in python and 
+  // python could run it 
   window.eel.expose(Set_Download_Percent, 'Set_Download_Percent')
 
 

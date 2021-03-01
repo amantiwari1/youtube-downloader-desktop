@@ -5,8 +5,10 @@ import os
 import string
 import re
 
-
-
+"""
+youtube_dl is used for get all details of a video
+urllib.request.urlretrieve is used for download along with url and formats
+"""
 # get the all detail of a video
 def Get_Data_Details(url):
     ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
@@ -34,7 +36,6 @@ def Get_Detail_Quality_Available(getDataFormat):
 
 
 
-# check url is vaild or not
 def Check_Url(url):
     """check url is vaild or not"""
     try:
@@ -60,6 +61,7 @@ def Download_Video(urlvideo, filename, send_progress):
         os.mkdir(path)
 
     try:
+        # https://docs.python.org/3.8/library/urllib.request.html#urllib.request.urlretrieve
         urllib.request.urlretrieve(urlvideo, f'video\{format_filename(filename)}.mp4', send_progress)
     except ValueError:
         return False

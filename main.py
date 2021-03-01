@@ -5,8 +5,13 @@ from backend import youtube
 
 
 def send_progress(block_num, block_size, total_size):
+    """ this is function where downloading how much percent calculate betweem
+     filesize  and downloading filesize"""
     video_size = total_size/block_size
     percent = int((block_num / video_size) * 100)
+
+
+    """this function come from javascript """
     eel.Set_Download_Percent(f"Downloding... {percent} %")
     if percent >= 100:
         eel.Set_Download_Percent(f"Success... 100%")
@@ -14,6 +19,9 @@ def send_progress(block_num, block_size, total_size):
 
 @eel.expose
 def Downloader(url):
+    """ This function is where to get all details in youtube in a video 
+    through url and return all details in youtube to javascript
+    """
     if not youtube.Check_Url(url):
         return ["Wrong link", ""]
 
@@ -35,7 +43,7 @@ def Downloader(url):
     
     eel.Set_Download_Percent(f"   ")
 
-
+    
     return {
         "title": title,
         "thumbnail": thumbnail,
@@ -48,12 +56,13 @@ def Downloader(url):
 
 @eel.expose
 def Download_video(detail, send_progress=send_progress):
+    """This function is used to download video to save video
+    """
     youtube.Download_Video(
         urlvideo=detail["urlvideo"],
         filename=f"{detail['title']}",
         send_progress=send_progress
     )
-
 
 def start_eel(develop):
     """Start Eel with either production or development configuration."""
