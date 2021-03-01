@@ -12,32 +12,37 @@ const App = () => {
 
   //  this is useState
   const [AllDetail, SetAllDetail] = useState<Array<any>>([])
-  const  [Url, SetUrl] = useState("")
- 
-  
+  const [Url, SetUrl] = useState("")
+
+
   const Get_Detail = () => {
 
-    
+
     // this function come from python line 17 in main.py 
     // then call this function then it will run in python
     // after it will get all details of youtube a video 
     // through 'message'  and all details stored value to AllDetails 
     // split mean 2 url in textarea into ["url", "url"]
 
+
+
     Url.split('\n').map((url: any) => {
-      window.eel.Add_Details(url)((message: any) => {
-        SetAllDetail(arr => [...arr, {...message}]);
-      } )
+      if (AllDetail.every(obj => obj.url !== url)) {
+
+        window.eel.Add_Details(url)((message: any) => {
+          SetAllDetail(arr => [...arr, { ...message }]);
+        })
+      }
 
       return 1;
     })
   }
-    
+
   // this function to set download percent like downlaoding 50% ...  
   function Set_Download_Percent(data: any) {
     let updatedList = AllDetail.map(item => {
       if (item.url === data.url) {
-        return {...item, downloadPercent: data.text};
+        return { ...item, downloadPercent: data.text };
       }
 
       return item;
@@ -52,7 +57,7 @@ const App = () => {
 
   const handleRemoveItem = (name: string) => {
     SetAllDetail(AllDetail.filter(item => item.title !== name))
-}
+  }
 
   return (
     <div className="App">
@@ -69,7 +74,7 @@ const App = () => {
 
         {
           AllDetail.map((data: any) => (
-            <Card handleRemoveItem={handleRemoveItem} data = {data}></Card>
+            <Card handleRemoveItem={handleRemoveItem} data={data}></Card>
           ))
         }
       </header>
