@@ -16,10 +16,19 @@ class youtube:
         self.url = url
         ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
         with ydl:
-            self.data = ydl.extract_info(url, download=False)
+            self.data = ydl.extract_info(url, download=False) # get the all details from url and store in self.data
 
-    # get the all detail of a video
     def Get_Data_Details(self):
+        """Get the all detail of a video 
+        In the following :
+        "title": title,
+        "thumbnail": thumbnail,
+        "list_Of_formats": list_Of_formats,
+        "formats": formats,
+        "filesize": filesize,
+        "videourl": videourl
+        
+        """
         title = self.data["title"]
         thumbnail = self.data['thumbnail']
         formats = self.data["formats"]
@@ -38,8 +47,9 @@ class youtube:
             "videourl": videourl
         }
 
-    # get list of video quality
     def Get_Detail_Quality_Available(self):
+        """get list of video quality
+        return ['144p', '240p', '360p', '480p', '720p', 'tiny']"""
         def atoi(text):
             return int(text) if text.isdigit() else text
 
@@ -51,9 +61,10 @@ class youtube:
             list_of_format.append(format["format_note"])
         return sorted(list(set(list_of_format)), key=natural_keys)
 
-    # get the video link along with quality
+    # 
 
     def Get_Url_Video_Quality_and_Filesize(self):
+        """Get the video link along with quality"""
         for format in self.data["formats"]:
             if self.Get_Detail_Quality_Available()[0] == format["format_note"]:
                 filesize = format["filesize"]
@@ -63,8 +74,8 @@ class youtube:
         return videourl, filesize
 
 
-# get the video url to download along with rename
 def Download_Video(urlvideo, filename, send_progress):
+    """Get the video url to download along with rename"""
     path = "video"
     if not os.path.isdir(path):
         os.mkdir(path)
