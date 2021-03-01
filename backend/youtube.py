@@ -9,49 +9,58 @@ import re
 youtube_dl is used for get all details of a video
 urllib.request.urlretrieve is used for download along with url and formats
 """
-# get the all detail of a video
-def Get_Data_Details(url):
-    ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
-
-    with ydl:
-        result = ydl.extract_info(url,download=False )
-
-    return result
-
-# get list of video quality
-def Get_Detail_Quality_Available(getDataFormat):
-    def atoi(text):
-        return int(text) if text.isdigit() else text
-
-    def natural_keys(text):
-        return [ atoi(c) for c in re.split('(\d+)',text) ]
-        
-    list_of_format = []
-    for format in getDataFormat:
-        list_of_format.append(format["format_note"])
-    return sorted(list(set(list_of_format)), key=natural_keys)
 
 
+class youtube:
+    def __init__(self, url):
+        self.url = url
+        ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
+        with ydl:
+            self.data = ydl.extract_info(url, download=False)
 
+    # get the all detail of a video
+    def Get_Data_Details(self):
+        title = self.data["title"]
+        thumbnail = self.data['thumbnail']
+        formats = self.data["formats"]
 
+        #  example : ['144p', '240p', '360p', '480p', '720p', 'tiny']
+        list_Of_formats = self.Get_Detail_Quality_Available()
 
+        videourl, filesize = self.Get_Url_Video_Quality_and_Filesize()
 
-def Check_Url(url):
-    """check url is vaild or not"""
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        return False
+        return {
+            "title": title,
+            "thumbnail": thumbnail,
+            "list_Of_formats": list_Of_formats,
+            "formats": formats,
+            "filesize": filesize,
+            "videourl": videourl
+        }
 
-# get the video link along with quality
-def Get_Url_Video_Quality_and_Filesize(getDataFormat, quality):
-    for i in getDataFormat:
-        if i["format_note"] == "360p":
-            urlvideo = i["url"]
-            filesize = i["filesize"]
-            break
-    return urlvideo, filesize
+    # get list of video quality
+    def Get_Detail_Quality_Available(self):
+        def atoi(text):
+            return int(text) if text.isdigit() else text
+
+        def natural_keys(text):
+            return [atoi(c) for c in re.split('(\d+)', text)]
+
+        list_of_format = []
+        for format in self.data["formats"]:
+            list_of_format.append(format["format_note"])
+        return sorted(list(set(list_of_format)), key=natural_keys)
+
+    # get the video link along with quality
+
+    def Get_Url_Video_Quality_and_Filesize(self):
+        for format in self.data["formats"]:
+            if self.Get_Detail_Quality_Available()[0] == format["format_note"]:
+                filesize = format["filesize"]
+                videourl = format["url"]
+                break
+
+        return videourl, filesize
 
 
 # get the video url to download along with rename
@@ -59,10 +68,10 @@ def Download_Video(urlvideo, filename, send_progress):
     path = "video"
     if not os.path.isdir(path):
         os.mkdir(path)
-
     try:
         # https://docs.python.org/3.8/library/urllib.request.html#urllib.request.urlretrieve
-        urllib.request.urlretrieve(urlvideo, f'video\{format_filename(filename)}.mp4', send_progress)
+        urllib.request.urlretrieve(
+            urlvideo, f'video\{format_filename(filename)}.mp4', send_progress)
     except ValueError:
         return False
 
@@ -73,17 +82,23 @@ def format_filename(s):
     """Take a string and return a valid filename constructed from the string.
 Uses a whitelist approach: any characters not present in valid_chars are
 removed. Also spaces are replaced with underscores.
- 
+
 Note: this method may produce invalid filenames such as ``, `.` or `..`
 When I use this method I prepend a date string like '2009_01_15_19_46_32_'
 and append a file extension like '.txt', so I avoid the potential of using
 an invalid filename.
- 
+
 """
     valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
     filename = ''.join(c for c in s if c in valid_chars)
-    filename = filename.replace(' ','_') # I don't like spaces in filenames.
+    filename = filename.replace(' ', '_')  # I don't like spaces in filenames.
     return filename
 
 
-
+def Check_Url(url):
+    """check url is vaild or not"""
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False

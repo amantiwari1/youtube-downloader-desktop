@@ -24,34 +24,10 @@ def Downloader(url):
     """
     if not youtube.Check_Url(url):
         return ["Wrong link", ""]
-
-    data = youtube.Get_Data_Details(url)
-
-    title = data['title']
-    thumbnail = data['thumbnail']
-    formats = data["formats"]
-
-    list_Of_formats = youtube.Get_Detail_Quality_Available(
-        getDataFormat=formats
-    )
-
-    for format in formats:
-        if list_Of_formats[0] == format["format_note"]:
-            filesize = format["filesize"]
-            videourl = format["url"]
-            break
-    
-    eel.Set_Download_Percent(f"   ")
-
-    
-    return {
-        "title": title,
-        "thumbnail": thumbnail,
-        "list_Of_formats": list_Of_formats,
-        "formats": formats,
-        "filesize": filesize,
-        "videourl": videourl
-    }
+        
+    YoutubeObject = youtube.youtube(url)
+    AllDetails =  YoutubeObject.Get_Data_Details()
+    return AllDetails
 
 
 @eel.expose
