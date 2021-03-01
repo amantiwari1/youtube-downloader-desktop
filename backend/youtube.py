@@ -2,7 +2,7 @@ import youtube_dl
 from urllib.parse import urlparse
 import urllib.request
 import os
-import string
+
 import re
 
 """
@@ -27,7 +27,6 @@ class youtube:
         "formats": formats,
         "filesize": filesize,
         "videourl": videourl
-        
         """
         title = self.data["title"]
         thumbnail = self.data['thumbnail']
@@ -39,12 +38,14 @@ class youtube:
         videourl, filesize = self.Get_Url_Video_Quality_and_Filesize()
 
         return {
+            "url": self.url,
             "title": title,
             "thumbnail": thumbnail,
             "list_Of_formats": list_Of_formats,
             "formats": formats,
             "filesize": filesize,
-            "videourl": videourl
+            "videourl": videourl,
+            "downloadPercent": "",
         }
 
     def Get_Detail_Quality_Available(self):
@@ -61,7 +62,7 @@ class youtube:
             list_of_format.append(format["format_note"])
         return sorted(list(set(list_of_format)), key=natural_keys)
 
-    # 
+
 
     def Get_Url_Video_Quality_and_Filesize(self):
         """Get the video link along with quality"""
@@ -74,36 +75,9 @@ class youtube:
         return videourl, filesize
 
 
-def Download_Video(urlvideo, filename, send_progress):
-    """Get the video url to download along with rename"""
-    path = "video"
-    if not os.path.isdir(path):
-        os.mkdir(path)
-    try:
-        # https://docs.python.org/3.8/library/urllib.request.html#urllib.request.urlretrieve
-        urllib.request.urlretrieve(
-            urlvideo, f'video\{format_filename(filename)}.mp4', send_progress)
-    except ValueError:
-        return False
-
-    return True
 
 
-def format_filename(s):
-    """Take a string and return a valid filename constructed from the string.
-Uses a whitelist approach: any characters not present in valid_chars are
-removed. Also spaces are replaced with underscores.
 
-Note: this method may produce invalid filenames such as ``, `.` or `..`
-When I use this method I prepend a date string like '2009_01_15_19_46_32_'
-and append a file extension like '.txt', so I avoid the potential of using
-an invalid filename.
-
-"""
-    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-    filename = ''.join(c for c in s if c in valid_chars)
-    filename = filename.replace(' ', '_')  # I don't like spaces in filenames.
-    return filename
 
 
 def Check_Url(url):

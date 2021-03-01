@@ -1,44 +1,32 @@
 import os
 import platform
 import eel
-from backend import youtube
-
-
-def send_progress(block_num, block_size, total_size):
-    """ this is function where downloading how much percent calculate betweem
-     filesize  and downloading filesize"""
-    video_size = total_size/block_size
-    percent = int((block_num / video_size) * 100)
-
-
-    """this function come from javascript """
-    eel.Set_Download_Percent(f"Downloding... {percent} %")
-    if percent >= 100:
-        eel.Set_Download_Percent(f"Success... 100%")
+from backend import youtube, downloadvideo
 
 
 @eel.expose
-def Downloader(url):
+def Add_Details(url):
     """ This function is where to get all details in youtube in a video 
     through url and return all details in youtube to javascript
     """
     if not youtube.Check_Url(url):
         return ["Wrong link", ""]
-        
     YoutubeObject = youtube.youtube(url)
     AllDetails =  YoutubeObject.Get_Data_Details()
     return AllDetails
 
 
+
+
+
 @eel.expose
-def Download_video(detail, send_progress=send_progress):
+def Download_video(data):
     """This function is used to download video to save video
     """
-    youtube.Download_Video(
-        urlvideo=detail["urlvideo"],
-        filename=f"{detail['title']}",
-        send_progress=send_progress
-    )
+    downloadvideo.Download_Video(data)
+
+
+
 
 def start_eel(develop):
     """Start Eel with either production or development configuration."""

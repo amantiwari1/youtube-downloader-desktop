@@ -11,72 +11,66 @@ eel.set_host('ws://localhost:8080')
 const App = () => {
 
   //  this is useState
-  const [AllDetail, SetAllDetail] = useState({
-    url: "",
-    title: "",
-    thumbnail: "",
-    DownloadPercent: "",
-    list_Of_formats: [],
-    formats: {},
-    filesize: 0,
-    videourl: ""
-  })
-
+  const [AllDetail, SetAllDetail] = useState<Array<any>>([])
+  const  [Url, SetUrl] = useState("")
+ 
   
-  const handleSubmit = () => {
+  const Get_Detail = () => {
 
-
+    
     // this function come from python line 17 in main.py 
     // then call this function then it will run in python
     // after it will get all details of youtube a video 
     // through 'message'  and all details stored value to AllDetails 
-    window.eel.Downloader(AllDetail.url)((message: any) => {
-      SetAllDetail({
-        ...AllDetail,
-        title: message.title,
-        thumbnail: message.thumbnail,
-        list_Of_formats: message.list_Of_formats,
-        formats: message.formats,
-        filesize: message.filesize,
-        videourl: message.videourl
-      })
+    // split mean 2 url in textarea into ["url", "url"]
+
+    Url.split('\n').map((url: any) => {
+      window.eel.Add_Details(url)((message: any) => {
+        SetAllDetail(arr => [...arr, {...message}]);
+      } )
+
+      return 1;
     })
   }
-
+    
   // this function to set download percent like downlaoding 50% ...  
-  function Set_Download_Percent(text: string) {
-    SetAllDetail({ ...AllDetail, DownloadPercent: text })
+  function Set_Download_Percent(data: any) {
+    let updatedList = AllDetail.map(item => {
+      if (item.url === data.url) {
+        return {...item, downloadPercent: data.text};
+      }
+
+      return item;
+    }
+    )
+    SetAllDetail([...updatedList])
   }
 
   // this Set_Download_Percent will be sent in python and 
   // python could run it 
   window.eel.expose(Set_Download_Percent, 'Set_Download_Percent')
 
+  const handleRemoveItem = (name: string) => {
+    SetAllDetail(AllDetail.filter(item => item.title !== name))
+}
 
   return (
     <div className="App">
       <header className="App-header">
         <form >
           <label>
-            <input onChange={(e) => SetAllDetail({ ...AllDetail, url: e.target.value })} />
+            <textarea onChange={(e) => SetUrl(e.target.value)} />
           </label>
           <br />
-          <button type='button' onClick={handleSubmit} >Get The youtube Detail</button>
+          <button type='button' onClick={Get_Detail} >Get The youtube Detail</button>
         </form>
         <br />
-        <p>{AllDetail.DownloadPercent}</p>
+        {/* <p>{AllDetail.DownloadPercent}</p> */}
 
         {
-          AllDetail.title && <Card
-            title={AllDetail.title}
-            thumbnail={AllDetail.thumbnail}
-            viewUrl={AllDetail.url}
-            list_Of_formats={AllDetail.list_Of_formats}
-            formats={AllDetail.formats}
-            filesize={AllDetail.filesize}
-            videourl={AllDetail.videourl}
-          >
-          </Card>
+          AllDetail.map((data: any) => (
+            <Card handleRemoveItem={handleRemoveItem} data = {data}></Card>
+          ))
         }
       </header>
     </div >
