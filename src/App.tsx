@@ -17,18 +17,17 @@ const App = () => {
 
   const Get_Detail = () => {
 
+    if (Url === "") {
+      return 0;
+    }
 
     // this function come from python line 17 in main.py 
     // then call this function then it will run in python
     // after it will get all details of youtube a video 
     // through 'message'  and all details stored value to AllDetails 
     // split mean 2 url in textarea into ["url", "url"]
-
-
-
     Url.split('\n').map((url: any) => {
       if (AllDetail.every(obj => obj.url !== url)) {
-
         window.eel.Add_Details(url)((message: any) => {
           SetAllDetail(arr => [...arr, { ...message }]);
         })
@@ -64,10 +63,10 @@ const App = () => {
       <header className="App-header">
         <form >
           <label>
-            <textarea onChange={(e) => SetUrl(e.target.value)} />
+            <textarea rows={5} cols={45} onChange={(e) => SetUrl(e.target.value)} required />
           </label>
           <br />
-          <button type='button' onClick={Get_Detail} >Get The youtube Detail</button>
+          <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button>
         </form>
         <br />
         {/* <p>{AllDetail.DownloadPercent}</p> */}
