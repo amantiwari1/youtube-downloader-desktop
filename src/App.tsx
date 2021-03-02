@@ -12,10 +12,14 @@ const App = () => {
 
   //  this is useState
   const [AllDetail, SetAllDetail] = useState<Array<any>>([])
-  const [Url, SetUrl] = useState("")
+  const [Warning, SetWaning] = useState<Array<any>>([])
 
 
-  const Get_Detail = () => {
+  const Get_Detail = async (Url: String) =>  {
+    // eslint-disable-next-line
+    var re = new RegExp(`https:\/\/www\.youtube\.com\/watch?.*=...........`);
+    SetAllDetail([]);
+    SetWaning([]);
 
     if (Url === "") {
       return 0;
@@ -26,15 +30,34 @@ const App = () => {
     // after it will get all details of youtube a video 
     // through 'message'  and all details stored value to AllDetails 
     // split mean 2 url in textarea into ["url", "url"]
-    Url.split('\n').map((url: any) => {
-      if (AllDetail.every(obj => obj.url !== url)) {
-        window.eel.Add_Details(url)((message: any) => {
-          SetAllDetail(arr => [...arr, { ...message }]);
-        })
+     Url.split('\n').map( async (url: String) =>  {
+
+      if( url !== "") {
+
+        
+        
+        if (url.match(re)) {
+          if (AllDetail.every(obj => obj.url !== url)) {
+
+            
+             await window.eel.Add_Details(url)((message: any)  =>  {
+                SetAllDetail(arr => [...arr, { ...message }]);
+          })
+
+
+          }
+          
+
+        } else {
+          SetWaning(arr => [...arr,  url]);
+        }
       }
+
 
       return 1;
     })
+
+
   }
 
   // this function to set download percent like downlaoding 50% ...  
@@ -63,16 +86,27 @@ const App = () => {
       <header className="App-header">
         <form >
           <label>
-            <textarea rows={5} cols={45} onChange={(e) => SetUrl(e.target.value)} required />
+            <textarea rows={5} cols={45} onChange={(e) => Get_Detail(e.target.value)} required />
           </label>
           <br />
-          <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button>
+          {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
         </form>
+
+        <div>
+          {
+            Warning.map(url => (
+              <p>{url} is Wrong Link Please fix it</p>
+            ))
+          }
+        </div>
         <br />
-        {/* <p>{AllDetail.DownloadPercent}</p> */}
+
+        
+      <br />
+        
 
         {
-          AllDetail.map((data: any) => (
+          AllDetail.map((data: any) => ( 
             <Card handleRemoveItem={handleRemoveItem} data={data}></Card>
           ))
         }

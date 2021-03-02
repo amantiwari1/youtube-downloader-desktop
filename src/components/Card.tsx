@@ -24,7 +24,6 @@ function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0
 
 const Card = ({data, handleRemoveItem}: CardInterface) => {
 
-    console.log(data.videourl)
 
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "" })
     const ChangeQualityHandle = (Quality: string) => {
@@ -42,6 +41,7 @@ const Card = ({data, handleRemoveItem}: CardInterface) => {
     }, [data.videourl, data.filesize, data.list_Of_formats])
 
     return (
+        <>
         <CardDiv>
             <img height="200" src={data.thumbnail} alt={data.title} />
             
@@ -62,6 +62,8 @@ const Card = ({data, handleRemoveItem}: CardInterface) => {
             <a target="_blank" rel="noopener noreferrer" href={data.url} >View</a>
             
         </CardDiv>
-    )
+
+    
+    </>)
 }
 export { Card }
