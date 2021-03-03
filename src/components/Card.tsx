@@ -14,6 +14,7 @@ interface CardInterface {
     downloadPercent: string,
 },
 handleRemoveItem: any
+path: string
 }
 
 const CardDiv = styled.div``
@@ -22,7 +23,7 @@ function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0
 
 
 
-const Card = ({data, handleRemoveItem}: CardInterface) => {
+const Card = ({data, handleRemoveItem, path}: CardInterface) => {
 
 
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "" })
@@ -55,7 +56,7 @@ const Card = ({data, handleRemoveItem}: CardInterface) => {
             </select>
             <p>size : {formatBytes(ChangeQuality.filesize)}</p>
             <p>{data.downloadPercent}</p>
-            <button type="button" onClick={() => window.eel.Download_video({ title: data.title, urlvideo: ChangeQuality.video_url, url:data.url })} >Download</button>
+            <button type="button" onClick={() => window.eel.Download_video({ title: data.title, urlvideo: ChangeQuality.video_url, url:data.url, path:path })} >Download</button>
             <button onClick={() => handleRemoveItem(data.title)}>
               Remove
             </button>

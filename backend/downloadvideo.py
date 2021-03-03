@@ -5,12 +5,8 @@ import string
 import os
 
 def Download_Video(data):
-    path = "video"
-    if not os.path.isdir(path):
-        os.mkdir(path)
-
-
-    with open(f"{path}/{format_filename(data['title'])}.mp4", "wb") as f:
+    
+    with open(f"{data['path']}/{format_filename(data['title'])}.mp4", "wb") as f:
         response = requests.get(data["urlvideo"], stream=True)
         total_length = response.headers.get('content-length')
         url = data['url']

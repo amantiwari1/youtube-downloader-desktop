@@ -1,7 +1,12 @@
 import os
 import platform
 import eel
-from backend import youtube, downloadvideo
+from backend import youtube, downloadvideo, folder
+import PySimpleGUI as sg
+import webbrowser
+
+
+
 
 
 @eel.expose
@@ -25,7 +30,38 @@ def Download_video(data):
     """
     downloadvideo.Download_Video(data)
 
+@eel.expose
+def Select_folder():
+    filename = sg.popup_get_folder('', no_window=True, keep_on_top=True)   # show an "Open" dialog box and return the path to the selected file
+    return filename
 
+@eel.expose
+def Get_Path_Folder():
+    path = 'data.xml'
+    if not os.path.isfile(path):
+        folder.Generate_XML()
+
+    return folder.Get_Path_From_XML()
+
+
+@eel.expose
+def Set_Path_Folder(fileaame):
+    folder.Set_Path_From_XML(fileaame)
+
+
+@eel.expose
+def Open_Folder(folder):
+    """
+    This is folder where download and save file and 
+    this function used for open floder 
+    """
+    webbrowser.open(os.path.realpath(folder))
+    
+
+
+
+    
+    
 
 
 def start_eel(develop):
