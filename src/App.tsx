@@ -53,7 +53,7 @@ const App = () => {
   }
 
   // this function to set download percent like downlaoding 50% ...  
-  const Set_Download_Percent = (data: any) => {
+  function Set_Download_Percent(data: any) {
     let updatedList = AllDetail.map(item => {
       if (item.url === data.url) {
         return { ...item, downloadPercent: data.text };
