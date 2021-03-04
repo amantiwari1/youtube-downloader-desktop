@@ -1,34 +1,26 @@
 import os
-import xml.etree.ElementTree as ET 
-from xml.dom import minidom
+import json
 
 
-
-def Generate_XML():
+def Generate_JSON():
     path = os.path.expanduser("~") + '\Downloads\\video'
     if not os.path.isdir(path):
         os.mkdir(path)
-    fileName = "data.xml" 
-    root = ET.Element("Data")
-    Save = ET.Element("Savefolder")
-    root.append (Save)
-    b1 = ET.SubElement(Save, "Path")
-    b1.text = path
-    tree = ET.ElementTree(root)
-    with open (fileName, "wb") as files:
-        tree.write(files) 
-
-def Get_Path_From_XML():
-    file = minidom.parse('data.xml')
-    Savefolder = file.getElementsByTagName('Path')
-    return Savefolder[0].firstChild.data
+    data = { "path": path }
+    with open('data.json', 'w') as json_file:
+        json.dump(data, json_file)
 
 
-def Set_Path_From_XML(filename):
-    data = ET.parse("data.xml")
-    root = data.getroot()
-    root[0][0].text = filename
-    tree = ET.ElementTree(root) 
-    with open ('data.xml', "wb") as files:
-        tree.write(files) 
-    return "Success"
+def Get_Path_From_JSON():
+    with open("data.json", "r") as jsonFile:
+        data = json.load(jsonFile)
+    return data["path"]
+
+
+def Set_Path_From_JSON(filename):
+    with open("data.json", "r") as jsonFile:
+        data = json.load(jsonFile)
+    
+    data["path"] = filename
+    with open("data.json", "w") as jsonFile:
+        json.dump(data, jsonFile)
