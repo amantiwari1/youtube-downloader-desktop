@@ -5,6 +5,10 @@
 /.pnp
 .pnp.js
 
+youtubeplaylist.json
+
+*/__pycache__
+__pycache__
 # testing
 /coverage
 
@@ -27,4 +31,4 @@ yarn-error.log*
 
 *.spec
 
-data.xml
+data.json
