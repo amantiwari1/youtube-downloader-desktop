@@ -4,9 +4,7 @@ import eel
 from backend import youtube, downloadvideo, folder
 import PySimpleGUI as sg
 import webbrowser
-
-
-
+import youtube_dl
 
 
 @eel.expose
@@ -17,11 +15,8 @@ def Add_Details(url):
     if not youtube.Check_Url(url):
         return ["Wrong link", ""]
     YoutubeObject = youtube.youtube(url)
-    AllDetails =  YoutubeObject.Get_Data_Details()
+    AllDetails = YoutubeObject.Get_Data_Details()
     return AllDetails
-
-
-
 
 
 @eel.expose
@@ -30,23 +25,26 @@ def Download_video(data):
     """
     downloadvideo.Download_Video(data)
 
+
 @eel.expose
 def Select_folder():
-    filename = sg.popup_get_folder('', no_window=True, keep_on_top=True)   # show an "Open" dialog box and return the path to the selected file
+    # show an "Open" dialog box and return the path to the selected file
+    filename = sg.popup_get_folder('', no_window=True, keep_on_top=True)
     return filename
+
 
 @eel.expose
 def Get_Path_Folder():
-    path = 'data.xml'
+    path = 'data.json'
     if not os.path.isfile(path):
-        folder.Generate_XML()
+        folder.Generate_JSON()
 
-    return folder.Get_Path_From_XML()
+    return folder.Get_Path_From_JSON()
 
 
 @eel.expose
 def Set_Path_Folder(fileaame):
-    folder.Set_Path_From_XML(fileaame)
+    folder.Set_Path_From_JSON(fileaame)
 
 
 @eel.expose
@@ -56,12 +54,21 @@ def Open_Folder(folder):
     this function used for open floder 
     """
     webbrowser.open(os.path.realpath(folder))
-    
 
 
+@eel.expose
+def Get_Data_Details_Playlists(url):
+    ydl_opts = {
+        'outtmpl': '%(id)s.%(ext)s',
+    }
+    ydl = youtube_dl.YoutubeDL(ydl_opts)
+    with ydl:
+        data = ydl.extract_info(url, download=False)
 
-    
-    
+    for i in data["entries"]:
+        eel.Get_Detail(i["webpage_url"])
+
+
 
 
 def start_eel(develop):
@@ -80,7 +87,7 @@ def start_eel(develop):
     eel_kwargs = dict(
         host='localhost',
         port=8080,
-        size=(1280, 800),
+        size=(400, 800),
     )
     try:
         eel.start(page, mode="chrome", **eel_kwargs)
