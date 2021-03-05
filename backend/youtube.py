@@ -12,11 +12,13 @@ urllib.request.urlretrieve is used for download along with url and formats
 
 
 class youtube:
-    def __init__(self, url):
+    def __init__(self, url, data=None):
         self.url = url
-        ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
-        with ydl:
-            self.data = ydl.extract_info(url, download=False) # get the all details from url and store in self.data
+        self.data = data
+        if data is None:
+            ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
+            with ydl:
+                self.data = ydl.extract_info(url, download=False) # get the all details from url and store in self.data
 
     def Get_Data_Details(self):
         """Get the all detail of a video 
