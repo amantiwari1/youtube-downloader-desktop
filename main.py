@@ -65,10 +65,27 @@ def Get_Data_Details_Playlists(url):
     with ydl:
         data = ydl.extract_info(url, download=False)
 
-    for i in data["entries"]:
-        eel.Get_Detail(i["webpage_url"])
+    arr_data = []
+
+    for data in data["entries"]:
+        youtube_obj = youtube.youtube(url=data["webpage_url"], data=data)
+        AllDetails = youtube_obj.Get_Data_Details()
+        arr_data.append(AllDetails)
+
+    return arr_data
 
 
+@eel.expose
+def All_Quality_Match(data):
+    if len(data) > 1:
+        ans = list(set.intersection(*map(set,data)))
+    elif len(data) == 1:
+        ans = data[0]
+    else:
+        ans = []
+
+
+    return ans
 
 
 def start_eel(develop):

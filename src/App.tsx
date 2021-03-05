@@ -18,6 +18,7 @@ const App = () => {
   const [Path, setPath] = useState("")
   const [Loading, setLoading] = useState(false)
   const [CardLoading, setCardLoading] = useState(false)
+  const [AllListOfQuaility, setAllListOfQuaility] = useState([])
 
 
   async function Get_Detail(Url: String) {
@@ -51,7 +52,12 @@ const App = () => {
           }
         } else if (url.match(playlist)) {
           setLoading(true)
-          window.eel.Get_Data_Details_Playlists(url)(() => {
+          window.eel.Get_Data_Details_Playlists(url)((data: any) => {
+
+            data.map((data: any) => {
+              SetAllDetail(arr => [...arr, { ...data }]);
+              return 0;
+            })
             setLoading(false)
           })
         }
@@ -105,6 +111,25 @@ const App = () => {
     })
 
   }, [])
+ 
+  
+
+  React.useEffect(() => {
+
+    var All_Data_Quality:Array<string> = []
+    AllDetail.map((data) => {
+
+      All_Data_Quality.push(data.list_Of_formats)
+
+
+      return 0;
+    })
+
+    window.eel.All_Quality_Match(All_Data_Quality)((data:any) => {
+      setAllListOfQuaility(data)
+    })
+    
+  }, [AllDetail])
 
   // open the folder wehere video are alreddy save
   const Open_Folder = (path: string) => {
@@ -146,14 +171,14 @@ const App = () => {
           <label>
             <textarea rows={5} cols={45} onChange={(e) => Get_Detail(e.target.value)} required />
 
-           {
-             Loading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
-           } 
+            {
+              Loading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
+            }
             {
 
-              AllDetail[0] && <> <select value={ChangeQuality} onChange={e => ChangeQualityHandle(e.target.value)}>
+            AllListOfQuaility !==[] && <> <select onChange={e => ChangeQualityHandle(e.target.value)}>
                 {
-                  AllDetail[0].list_Of_formats.map((quality: string) => (
+                  AllListOfQuaility.map((quality: string) => (
                     <option>{quality}</option>
                   ))
                 }
@@ -175,7 +200,7 @@ const App = () => {
           }
         </div>
 
-        
+
         <br />
 
 
@@ -190,9 +215,9 @@ const App = () => {
 
 
         <div>
-        {
-          CardLoading && <p>Loading</p>
-        }
+          {
+            CardLoading && <p>Loading</p>
+          }
         </div>
       </header>
     </div >
@@ -201,3 +226,4 @@ const App = () => {
 }
 
 export default App;
+
