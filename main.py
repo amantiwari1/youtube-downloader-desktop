@@ -5,6 +5,7 @@ from backend import youtube, downloadvideo, folder
 import PySimpleGUI as sg
 import webbrowser
 import youtube_dl
+import re
 
 
 @eel.expose
@@ -77,8 +78,16 @@ def Get_Data_Details_Playlists(url):
 
 @eel.expose
 def All_Quality_Match(data):
+
+    def atoi(text):
+        return int(text) if text.isdigit() else text
+
+    def natural_keys(text):
+        return [atoi(c) for c in re.split('(\d+)', text)]
+
+
     if len(data) > 1:
-        ans = list(set.intersection(*map(set,data)))
+        ans = sorted(list(set.intersection(*map(set,data))), key=natural_keys)
     elif len(data) == 1:
         ans = data[0]
     else:
