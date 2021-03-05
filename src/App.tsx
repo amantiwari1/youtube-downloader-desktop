@@ -176,7 +176,7 @@ const App = () => {
             }
             {
 
-            AllListOfQuaility !==[] && <> <select onChange={e => ChangeQualityHandle(e.target.value)}>
+            AllListOfQuaility.length > 0 && <> <select onChange={e => ChangeQualityHandle(e.target.value)}>
                 {
                   AllListOfQuaility.map((quality: string) => (
                     <option>{quality}</option>
@@ -186,7 +186,7 @@ const App = () => {
 
                 <button type="button" onClick={() => All_Download_Video(ChangeQuality)}>Download all video</button>
 
-              </>}
+              </> }
           </label>
           <br />
           {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
