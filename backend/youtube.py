@@ -1,9 +1,7 @@
 import youtube_dl
-from urllib.parse import urlparse
 import urllib.request
 import os
-
-import re
+from .function import natural_keys  
 
 """
 youtube_dl is used for get all details of a video
@@ -53,11 +51,7 @@ class youtube:
     def Get_Detail_Quality_Available(self):
         """get list of video quality
         return ['144p', '240p', '360p', '480p', '720p', 'tiny']"""
-        def atoi(text):
-            return int(text) if text.isdigit() else text
-
-        def natural_keys(text):
-            return [atoi(c) for c in re.split('(\d+)', text)]
+       
 
         list_of_format = []
         for format in self.data["formats"]:
@@ -79,13 +73,3 @@ class youtube:
 
 
 
-
-
-
-def Check_Url(url):
-    """check url is vaild or not"""
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        return False

@@ -1,11 +1,10 @@
 import os
 import platform
 import eel
-from backend import youtube, downloadvideo, folder
+from backend import youtube, downloadvideo, folder, function
 import PySimpleGUI as sg
 import webbrowser
 import youtube_dl
-import re
 
 
 @eel.expose
@@ -13,7 +12,7 @@ def Add_Details(url):
     """ This function is where to get all details in youtube in a video 
     through url and return all details in youtube to javascript
     """
-    if not youtube.Check_Url(url):
+    if not function.Check_Url(url):
         return ["Wrong link", ""]
     YoutubeObject = youtube.youtube(url)
     AllDetails = YoutubeObject.Get_Data_Details()
@@ -59,6 +58,9 @@ def Open_Folder(folder):
 
 @eel.expose
 def Get_Data_Details_Playlists(url):
+    """
+    To get all video details in playlist to javascript
+    """
     ydl_opts = {
         'outtmpl': '%(id)s.%(ext)s',
     }
@@ -78,16 +80,11 @@ def Get_Data_Details_Playlists(url):
 
 @eel.expose
 def All_Quality_Match(data):
-
-    def atoi(text):
-        return int(text) if text.isdigit() else text
-
-    def natural_keys(text):
-        return [atoi(c) for c in re.split('(\d+)', text)]
-
-
+    """
+    common quality in all video 
+    """
     if len(data) > 1:
-        ans = sorted(list(set.intersection(*map(set,data))), key=natural_keys)
+        ans = sorted(list(set.intersection(*map(set,data))), key=function.natural_keys)
     elif len(data) == 1:
         ans = data[0]
     else:
