@@ -17,6 +17,8 @@ class youtube:
             ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
             with ydl:
                 self.data = ydl.extract_info(url, download=False) # get the all details from url and store in self.data
+        self.maps = {}
+
 
     def Get_Data_Details(self):
         """Get the all detail of a video 
@@ -32,43 +34,43 @@ class youtube:
         thumbnail = self.data['thumbnail']
         formats = self.data["formats"]
 
-        #  example : ['144p', '240p', '360p', '480p', '720p', 'tiny']
-        list_Of_formats = self.Get_Detail_Quality_Available()
+        
+        self.Get_Detail_Quality_Available()
 
-        videourl, filesize = self.Get_Url_Video_Quality_and_Filesize()
 
         return {
             "url": self.url,
             "title": title,
             "thumbnail": thumbnail,
-            "list_Of_formats": list_Of_formats,
             "formats": formats,
-            "filesize": filesize,
-            "videourl": videourl,
             "downloadPercent": "",
+            "videoquality": self.maps
         }
 
     def Get_Detail_Quality_Available(self):
         """get list of video quality
         return ['144p', '240p', '360p', '480p', '720p', 'tiny']"""
-       
+        
 
-        list_of_format = []
         for format in self.data["formats"]:
+            format_note = format["format_note"] 
             list_of_format.append(format["format_note"])
-        return sorted(list(set(list_of_format)), key=natural_keys)
+
+            if  not format_note  in self.maps:
+                self.maps[format_note] = {
+                    "format_note":format_note,
+                    "Video_url":format["url"],
+                    "filesize":format["filesize"]
+                }
+        
+
+            
 
 
 
-    def Get_Url_Video_Quality_and_Filesize(self):
-        """Get the video link along with quality"""
-        for format in self.data["formats"]:
-            if self.Get_Detail_Quality_Available()[0] == format["format_note"]:
-                filesize = format["filesize"]
-                videourl = format["url"]
-                break
 
-        return videourl, filesize
+   
+
 
 
 

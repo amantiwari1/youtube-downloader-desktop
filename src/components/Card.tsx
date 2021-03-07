@@ -7,11 +7,9 @@ interface CardInterface {
     thumbnail: string,
     title: any,
     formats?: any,
-    list_Of_formats: Array<string>,
     url: string,
-    filesize: number,
-    videourl: string,
     downloadPercent: string,
+    videoquality: any
 },
 handleRemoveItem: any
 path: string
@@ -27,19 +25,24 @@ const Card = ({data, handleRemoveItem, path}: CardInterface) => {
 
 
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "" })
+    
     const ChangeQualityHandle = (Quality: string) => {
-        for (let format of data.formats) {
-            if (format.format_note === Quality) {
-                setChangeQuality({ video_url: format.url, filesize: format.filesize, quality: format.format_note });
-                break;
-            }
-        }
+        
+        
+        const {format_note, Video_url, filesize} = data.videoquality[Quality]
+        setChangeQuality({ video_url: Video_url, filesize: filesize, quality: format_note })   
     }
 
     useEffect(() => {
-        setChangeQuality({ video_url: data.videourl, filesize: data.filesize, quality: data.list_Of_formats[0] })
 
-    }, [data.videourl, data.filesize, data.list_Of_formats])
+        const{format_note, Video_url, filesize} = data.videoquality[Object.keys(data.videoquality)[1]]
+        setChangeQuality({ video_url: Video_url, filesize: filesize, quality: format_note })
+
+        
+
+    }, [data.videoquality])
+
+    
 
     return (
         <>
@@ -49,7 +52,7 @@ const Card = ({data, handleRemoveItem, path}: CardInterface) => {
             <p>{data.title}</p>
             <select value={ChangeQuality.quality} onChange={e => ChangeQualityHandle(e.target.value)}>
                 {
-                    data.list_Of_formats.map((quality: string) => (
+                    Object.keys(data.videoquality).map((quality: string) => (
                         <option>{quality}</option>
                     ))
                 }
@@ -57,7 +60,7 @@ const Card = ({data, handleRemoveItem, path}: CardInterface) => {
             <p>size : {formatBytes(ChangeQuality.filesize)}</p>
             <p>{data.downloadPercent}</p>
             <button type="button" onClick={() => window.eel.Download_video({ title: data.title, urlvideo: ChangeQuality.video_url, url:data.url, path:path })} >Download</button>
-            <button onClick={() => handleRemoveItem(data.title)}>
+            <button onClick={() => handleRemoveItem({name: data.title, type: 'remove'})}>
               Remove
             </button>
             <a target="_blank" rel="noopener noreferrer" href={data.url} >View</a>

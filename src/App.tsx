@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Card } from './components/Card'
+import React, { useState, useReducer, createContext } from 'react';
+import { Card } from './components/Card';
+import { DetailsReducer } from "./Reducer";
+import { PathCompoment } from "./components/Path";
+import {Input} from "./components/Input"
 
 
 // this is eel 
@@ -8,222 +11,188 @@ export const eel = window.eel
 eel.set_host('ws://localhost:8080')
 
 
+interface MyContextType {
+  Path: any,
+  setPath: any;
+  AllDetail: any;
+  SetAllDetail: any;
+  Warning: any;
+  SetWaning: any;
+  PlayListLoading: any;
+  setPlayListLoading: any;
+  CardLoading: any;
+  setCardLoading: any;
+  setAllListOfQuaility: any;
+  ChangeQuality: any;
+  setChangeQuality: any;
+  
+}
+
+
+export const ThemeContext = createContext<MyContextType>({
+  Path: null,
+  setPath: null,
+  AllDetail: null,
+  SetAllDetail: null,
+  Warning: null,
+  SetWaning: null,
+  PlayListLoading: null,
+  setPlayListLoading: null,
+  CardLoading: null,
+  setCardLoading: null,
+  setAllListOfQuaility: null,
+  ChangeQuality: null,
+  setChangeQuality: null,
+});
+
 const App = () => {
 
-
-
+  
+ 
   //  this is useState
-  const [AllDetail, SetAllDetail] = useState<Array<any>>([])
+  const [AllDetail, SetAllDetail] = useReducer(DetailsReducer, [])
   const [Warning, SetWaning] = useState<Array<any>>([])
   const [Path, setPath] = useState("")
-  const [Loading, setLoading] = useState(false)
+  const [PlayListLoading, setPlayListLoading] = useState(false)
   const [CardLoading, setCardLoading] = useState(false)
   const [AllListOfQuaility, setAllListOfQuaility] = useState([])
-
-
-  async function Get_Detail(Url: String) {
-    // eslint-disable-next-line
-    var re = new RegExp(`https:\/\/www\.youtube\.com\/watch?.*=...........`);
-    // eslint-disable-next-line
-    var playlist = new RegExp(`https://www.youtube.com/playlist`);
-    SetAllDetail([]);
-    SetWaning([]);
-
-    if (Url === "") {
-      return 0;
-    }
-
-    // this function come from python line 17 in main.py 
-    // then call this function then it will run in python
-    // after it will get all details of youtube a video 
-    // through 'message'  and all details stored value to AllDetails 
-    // split mean 2 url in textarea into ["url", "url"]
-    Url.split('\n').map(async (url: String) => {
-
-      if (url !== "") {
-        if (url.match(re)) {
-          if (AllDetail.every(obj => obj.url !== url)) {
-            setCardLoading(true)
-            await window.eel.Add_Details(url)((message: any) => {
-              SetAllDetail(arr => [...arr, { ...message }]);
-              setCardLoading(false)
-
-            })
-          }
-        } else if (url.match(playlist)) {
-          setLoading(true)
-          window.eel.Get_Data_Details_Playlists(url)((data: any) => {
-
-            data.map((data: any) => {
-              SetAllDetail(arr => [...arr, { ...data }]);
-              return 0;
-            })
-            setLoading(false)
-          })
-        }
-        else {
-          SetWaning(arr => [...arr, url]);
-        }
-      }
-      return 1;
-    })
-
-
-  }
+  const [ChangeQuality, setChangeQuality] = useState("144p")
+  
+ 
 
   // this function to set download percent like downlaoding 50% ...  
   function Set_Download_Percent(data: any) {
-    let updatedList = AllDetail.map(item => {
-      if (item.url === data.url) {
-        return { ...item, downloadPercent: data.text };
-      }
-      return item;
-    }
-    )
-    SetAllDetail([...updatedList])
+    SetAllDetail({ data, type: 'updateDownloadPercent' })
   }
 
   // this Set_Download_Percent will be sent in python and 
   // python could run it 
   window.eel.expose(Set_Download_Percent, 'Set_Download_Percent')
-  window.eel.expose(Get_Detail, 'Get_Detail')
-
-  // remove a youtube video but not delete
-  const handleRemoveItem = (name: string) => {
-    SetAllDetail(AllDetail.filter(item => item.title !== name))
-  }
 
 
-  // selecl folder is where save video
-  const Select_folder = () => {
-    window.eel.Select_folder()((getpath: string) => {
-      if (getpath !== "") {
-        setPath(getpath)
-        window.eel.Set_Path_Folder(getpath)()
-      }
-    })
-  }
-
-  // get the path wehere user is choice save a video in the folder
   React.useEffect(() => {
     window.eel.Get_Path_Folder()((getpath: string) => {
       setPath(getpath)
     })
-
   }, [])
- 
-  
+
+
 
   React.useEffect(() => {
 
-    var All_Data_Quality:Array<string> = []
-    AllDetail.map((data) => {
+    type Dict = { [key: string]: number };
+    const totalfilesize: Dict  = {}
 
-      All_Data_Quality.push(data.list_Of_formats)
+    
+    var All_Data_Quality: Array<Array<string>> = []
+    AllDetail.map((data: any) => {
+    
 
-
+      All_Data_Quality.push(Object.keys(data.videoquality))
       return 0;
     })
+    window.eel.All_Quality_Match(All_Data_Quality)((data: any) => {
 
-    window.eel.All_Quality_Match(All_Data_Quality)((data:any) => {
+      
+
+      data.map( (quality: string) => {
+
+        AllDetail.map((data: any) => {
+          
+
+          if (!(quality in totalfilesize)) {
+            totalfilesize[quality] = 0
+          }
+
+          
+          totalfilesize[quality] = totalfilesize[quality] + data.videoquality[quality].filesize
+
+          console.log(totalfilesize);
+
+
+          return 0;
+        })
+
+
+        return 0;
+      })
+
       setAllListOfQuaility(data)
     })
+
+
+    
     
   }, [AllDetail])
 
-  // open the folder wehere video are alreddy save
-  const Open_Folder = (path: string) => {
-    window.eel.Open_Folder(path)()
-  }
 
+  
 
   const All_Download_Video = (Quality: string) => {
     AllDetail.map((data: any) => {
-
-      console.log(data.title);
       for (let format of data.formats) {
         if (format.format_note === Quality) {
           window.eel.Download_video({ title: data.title, urlvideo: format.url, url: data.url, path: Path })
           break;
         }
       }
-
-
       return 0;
     })
   }
 
-
-  const [ChangeQuality, setChangeQuality] = useState("144p")
-  const ChangeQualityHandle = (Quality: string) => {
-    setChangeQuality(Quality);
-  }
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <label>Save a video</label>
-        <p>{Path}</p>
-        <button onClick={Select_folder} >Select</button>
-        <button onClick={() => Open_Folder(Path)} >Open</button>
-        <br />
-        <form >
-          <label>
-            <textarea rows={5} cols={45} onChange={(e) => Get_Detail(e.target.value)} required />
 
-            {
-              Loading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
-            }
-            {
+    <ThemeContext.Provider  value = {{Path, setPath, AllDetail,  SetAllDetail,  Warning,  SetWaning,  PlayListLoading,  setPlayListLoading,  CardLoading,  setCardLoading,setAllListOfQuaility,  ChangeQuality,  setChangeQuality,}}>
 
-            AllListOfQuaility.length > 0 && <> <select onChange={e => ChangeQualityHandle(e.target.value)}>
-                {
-                  AllListOfQuaility.map((quality: string) => (
-                    <option>{quality}</option>
-                  ))
-                }
-              </select>
-
-                <button type="button" onClick={() => All_Download_Video(ChangeQuality)}>Download all video</button>
-
-              </> }
-          </label>
+      <div className="App">
+        <header className="App-header">
+          <PathCompoment></PathCompoment>
           <br />
-          {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
-        </form>
+          <form >
+            <label>
+            <Input />
+              {
+                PlayListLoading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
+              }
+              {
 
-        <div>
+                AllListOfQuaility.length > 0 && <> <select onChange={e => setChangeQuality(e.target.value)}>
+                  {
+                    AllListOfQuaility.map((quality: string) => (
+                      <option>{quality}</option>
+                    ))
+                  }
+                </select>
+                </>}
+                  <button disabled={AllListOfQuaility.length === 0} type="button" onClick={() => All_Download_Video(ChangeQuality)}>Download</button>
+            </label>
+            <br />
+            {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
+          </form>
+
+          <div>
+            {
+              Warning.map(url => (
+                <p>{url} is Wrong Link Please fix it</p>
+              ))
+            }
+          </div>
+          <br />
           {
-            Warning.map(url => (
-              <p>{url} is Wrong Link Please fix it</p>
+            AllDetail.map((data: any) => (
+              <Card handleRemoveItem={SetAllDetail} path={Path} data={data}></Card>
             ))
           }
-        </div>
-
-
-        <br />
-
-
-        <br />
-
-
-        {
-          AllDetail.map((data: any) => (
-            <Card handleRemoveItem={handleRemoveItem} path={Path} data={data}></Card>
-          ))
-        }
-
-
-        <div>
-          {
-            CardLoading && <p>Loading</p>
-          }
-        </div>
-      </header>
-    </div >
+          <div>
+            {
+              CardLoading && <p>Loading</p>
+            }
+          </div>
+        </header>
+      </div >
+    </ThemeContext.Provider>
   );
 
 }
 
 export default App;
-
