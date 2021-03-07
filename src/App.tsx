@@ -2,7 +2,7 @@ import React, { useState, useReducer, createContext } from 'react';
 import { Card } from './components/Card';
 import { DetailsReducer } from "./Reducer";
 import { PathCompoment } from "./components/Path";
-import {Input} from "./components/Input"
+import { Input } from "./components/Input"
 
 
 // this is eel 
@@ -25,7 +25,7 @@ interface MyContextType {
   setAllListOfQuaility: any;
   ChangeQuality: any;
   setChangeQuality: any;
-  
+
 }
 
 
@@ -47,8 +47,8 @@ export const ThemeContext = createContext<MyContextType>({
 
 const App = () => {
 
-  
- 
+
+
   //  this is useState
   const [AllDetail, SetAllDetail] = useReducer(DetailsReducer, [])
   const [Warning, SetWaning] = useState<Array<any>>([])
@@ -57,8 +57,8 @@ const App = () => {
   const [CardLoading, setCardLoading] = useState(false)
   const [AllListOfQuaility, setAllListOfQuaility] = useState([])
   const [ChangeQuality, setChangeQuality] = useState("144p")
-  
- 
+
+
 
   // this function to set download percent like downlaoding 50% ...  
   function Set_Download_Percent(data: any) {
@@ -79,54 +79,30 @@ const App = () => {
 
 
   React.useEffect(() => {
-
     type Dict = { [key: string]: number };
-    const totalfilesize: Dict  = {}
-
-    
+    const totalfilesize: Dict = {}
     var All_Data_Quality: Array<Array<string>> = []
     AllDetail.map((data: any) => {
-    
-
       All_Data_Quality.push(Object.keys(data.videoquality))
       return 0;
     })
     window.eel.All_Quality_Match(All_Data_Quality)((data: any) => {
-
-      
-
-      data.map( (quality: string) => {
+      data.map((quality: string) => {
 
         AllDetail.map((data: any) => {
-          
-
           if (!(quality in totalfilesize)) {
             totalfilesize[quality] = 0
           }
-
-          
           totalfilesize[quality] = totalfilesize[quality] + data.videoquality[quality].filesize
-
-          console.log(totalfilesize);
-
-
           return 0;
         })
-
-
         return 0;
       })
-
       setAllListOfQuaility(data)
     })
-
-
-    
-    
   }, [AllDetail])
 
 
-  
 
   const All_Download_Video = (Quality: string) => {
     AllDetail.map((data: any) => {
@@ -141,55 +117,49 @@ const App = () => {
   }
 
   return (
-
-    <ThemeContext.Provider  value = {{Path, setPath, AllDetail,  SetAllDetail,  Warning,  SetWaning,  PlayListLoading,  setPlayListLoading,  CardLoading,  setCardLoading,setAllListOfQuaility,  ChangeQuality,  setChangeQuality,}}>
-
-      <div className="App">
-        <header className="App-header">
-          <PathCompoment></PathCompoment>
-          <br />
-          <form >
-            <label>
-            <Input />
-              {
-                PlayListLoading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
-              }
-              {
-
-                AllListOfQuaility.length > 0 && <> <select onChange={e => setChangeQuality(e.target.value)}>
-                  {
-                    AllListOfQuaility.map((quality: string) => (
-                      <option>{quality}</option>
-                    ))
-                  }
-                </select>
-                </>}
-                  <button disabled={AllListOfQuaility.length === 0} type="button" onClick={() => All_Download_Video(ChangeQuality)}>Download</button>
-            </label>
-            <br />
-            {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
-          </form>
-
-          <div>
+    <ThemeContext.Provider value={{ Path, setPath, AllDetail, SetAllDetail, Warning, SetWaning, PlayListLoading, setPlayListLoading, CardLoading, setCardLoading, setAllListOfQuaility, ChangeQuality, setChangeQuality, }}>
+      <div>
+        <PathCompoment />
+      </div>
+      <br />
+      <div>
+        <Input />
+      </div>
+      <div>
+        {
+          PlayListLoading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
+        }
+        {
+          AllListOfQuaility.length > 0 && <> <select onChange={e => setChangeQuality(e.target.value)}>
             {
-              Warning.map(url => (
-                <p>{url} is Wrong Link Please fix it</p>
+              AllListOfQuaility.map((quality: string) => (
+                <option>{quality}</option>
               ))
             }
-          </div>
-          <br />
-          {
-            AllDetail.map((data: any) => (
-              <Card handleRemoveItem={SetAllDetail} path={Path} data={data}></Card>
-            ))
-          }
-          <div>
-            {
-              CardLoading && <p>Loading</p>
-            }
-          </div>
-        </header>
-      </div >
+          </select>
+          </>}
+        <button disabled={AllListOfQuaility.length === 0} type="button" onClick={() => All_Download_Video(ChangeQuality)}>Download</button>
+        <br />
+        {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
+      </div>
+      <div>
+        {
+          Warning.map(url => (
+            <p>{url} is Wrong Link Please fix it</p>
+          ))
+        }
+      </div>
+      <br />
+      <div>
+        {
+          AllDetail.map((data: any) => (
+            <Card handleRemoveItem={SetAllDetail} path={Path} data={data}></Card>
+          ))
+        }
+        {
+          CardLoading && <p>Loading</p>
+        }
+      </div>
     </ThemeContext.Provider>
   );
 
