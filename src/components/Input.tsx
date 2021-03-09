@@ -5,9 +5,15 @@ import { ThemeContext } from "../App";
 
 const Input = () => {
 
-    const { SetWaning, AllDetail, SetAllDetail, setCardLoading, setPlayListLoading } = useContext(ThemeContext)
+    const {setIsError, SetWaning, AllDetail, SetAllDetail, setCardLoading, setPlayListLoading } = useContext(ThemeContext)
 
-    const Get_Detail = async (Url: String) => {
+    const Get_Detail = async  (Url: String) => {
+
+
+
+
+        setIsError(false)
+
         // eslint-disable-next-line
         var re = new RegExp(`https:\/\/www\.youtube\.com\/watch?.*=...........`);
         // eslint-disable-next-line
@@ -19,18 +25,24 @@ const Input = () => {
             return 0;
         }
 
+        const AllUrl = Url.split('\n')
+
         // this function come from python line 17 in main.py 
         // then call this function then it will run in python
         // after it will get all details of youtube a video 
         // through 'message'  and all details stored value to AllDetails 
         // split mean 2 url in textarea into ["url", "url"]
-        Url.split('\n').map(async (url: String) => {
+
+        for (let i = 0; i < AllUrl.length; i++)  
+         {
+
+            let url = AllUrl[i]
 
             if (url !== "") {
                 if (url.match(re)) {
                     if (AllDetail.every((obj: any) => obj.url !== url)) {
-                        setCardLoading(true)
-                        await window.eel.Add_Details(url)((message: any) => {
+                         setCardLoading(true)
+                         await window.eel.Add_Details(url)((message: any) => {
                             SetAllDetail({ message, type: 'add' });
                             setCardLoading(false)
 
@@ -38,7 +50,7 @@ const Input = () => {
                     }
                 } else if (url.match(playlist)) {
                     setPlayListLoading(true)
-                    window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
+                     window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
                         console.log(data);
 
                         data.map((message: any) => {
@@ -52,10 +64,18 @@ const Input = () => {
                     SetWaning((arr: any) => [...arr, url]);
                 }
             }
-            return 1;
-        })
+        }  
+        
+        
+        return false;
+        
+
+
     }
 
+   
+
+    
 
     return (
 

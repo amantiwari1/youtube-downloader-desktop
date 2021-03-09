@@ -2,6 +2,7 @@ import youtube_dl
 import urllib.request
 import os
 from .function import natural_keys  
+import json
 
 """
 youtube_dl is used for get all details of a video
@@ -14,9 +15,18 @@ class youtube:
         self.url = url
         self.data = data
         if data is None:
-            ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s'})
-            with ydl:
-                self.data = ydl.extract_info(url, download=False) # get the all details from url and store in self.data
+            try:
+                ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s',})
+                with ydl:
+                    self.data = ydl.extract_info(url, download=False) # get the all details from url and store in self.data
+            except:
+                print("errorrrrrr")
+                eel.isErrorDownload()
+        
+        out_file = open("myfile.json", "w")  
+        json.dump(self.data, out_file, indent = 6)   
+        out_file.close()
+
         self.maps = {}
 
 
@@ -46,6 +56,8 @@ class youtube:
             "downloadPercent": "",
             "videoquality": self.maps
         }
+    
+    
 
     def Get_Detail_Quality_Available(self):
         """get list of video quality
@@ -54,7 +66,6 @@ class youtube:
 
         for format in self.data["formats"]:
             format_note = format["format_note"] 
-            list_of_format.append(format["format_note"])
 
             if  not format_note  in self.maps:
                 self.maps[format_note] = {

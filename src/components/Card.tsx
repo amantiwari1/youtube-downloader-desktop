@@ -27,19 +27,16 @@ const Card = ({data, handleRemoveItem, path}: CardInterface) => {
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "" })
     
     const ChangeQualityHandle = (Quality: string) => {
-        
-        
         const {format_note, Video_url, filesize} = data.videoquality[Quality]
         setChangeQuality({ video_url: Video_url, filesize: filesize, quality: format_note })   
     }
 
     useEffect(() => {
 
+        console.log(data.videoquality);
+        
         const{format_note, Video_url, filesize} = data.videoquality[Object.keys(data.videoquality)[1]]
         setChangeQuality({ video_url: Video_url, filesize: filesize, quality: format_note })
-
-        
-
     }, [data.videoquality])
 
     
@@ -59,7 +56,7 @@ const Card = ({data, handleRemoveItem, path}: CardInterface) => {
             </select>
             <p>size : {formatBytes(ChangeQuality.filesize)}</p>
             <p>{data.downloadPercent}</p>
-            <button type="button" onClick={() => window.eel.Download_video({ title: data.title, urlvideo: ChangeQuality.video_url, url:data.url, path:path })} >Download</button>
+            <button type="button" onClick={() => window.eel.Download_video({ title: data.title, urlvideo: ChangeQuality.video_url, url:data.url, path:path, audiourl:data.videoquality['tiny'].Video_url })} >Download</button>
             <button onClick={() => handleRemoveItem({name: data.title, type: 'remove'})}>
               Remove
             </button>

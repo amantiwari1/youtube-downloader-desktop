@@ -25,6 +25,7 @@ interface MyContextType {
   setAllListOfQuaility: any;
   ChangeQuality: any;
   setChangeQuality: any;
+  setIsError: any;
 
 }
 
@@ -43,6 +44,7 @@ export const ThemeContext = createContext<MyContextType>({
   setAllListOfQuaility: null,
   ChangeQuality: null,
   setChangeQuality: null,
+  setIsError: null,
 });
 
 const App = () => {
@@ -56,7 +58,9 @@ const App = () => {
   const [PlayListLoading, setPlayListLoading] = useState(false)
   const [CardLoading, setCardLoading] = useState(false)
   const [AllListOfQuaility, setAllListOfQuaility] = useState([])
-  const [ChangeQuality, setChangeQuality] = useState("144p")
+  const [ChangeQuality, setChangeQuality] = useState({ totalfilesize: {}, quality: "" })
+  const [isError, setIsError] = useState(false)
+
 
 
 
@@ -64,10 +68,14 @@ const App = () => {
   function Set_Download_Percent(data: any) {
     SetAllDetail({ data, type: 'updateDownloadPercent' })
   }
+  function isErrorDownload() {
+    setIsError(!isError)
+  }
 
   // this Set_Download_Percent will be sent in python and 
   // python could run it 
   window.eel.expose(Set_Download_Percent, 'Set_Download_Percent')
+  window.eel.expose(isErrorDownload, 'isErrorDownload')
 
 
   React.useEffect(() => {
@@ -79,7 +87,7 @@ const App = () => {
 
 
   React.useEffect(() => {
-    type Dict = { [key: string]: number };
+    type Dict = { [key: string]: any };
     const totalfilesize: Dict = {}
     var All_Data_Quality: Array<Array<string>> = []
     AllDetail.map((data: any) => {
@@ -99,38 +107,55 @@ const App = () => {
         return 0;
       })
       setAllListOfQuaility(data)
+      setChangeQuality({quality: data[0], totalfilesize: totalfilesize})
+
     })
   }, [AllDetail])
 
+function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0 > b ? 0 : b, d = Math.floor(Math.log(a) / Math.log(1024)); return parseFloat((a / Math.pow(1024, d)).toFixed(c)) + " " + ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"][d] }
 
 
   const All_Download_Video = (Quality: string) => {
     AllDetail.map((data: any) => {
-      for (let format of data.formats) {
-        if (format.format_note === Quality) {
-          window.eel.Download_video({ title: data.title, urlvideo: format.url, url: data.url, path: Path })
-          break;
-        }
-      }
+      const { Video_url } = data.videoquality[Quality]
+
+      window.eel.Download_video({ title: data.title, urlvideo: Video_url, url: data.url, path: Path, audiourl: data.videoquality['tiny'].Video_url})
       return 0;
     })
   }
 
+
+  const HandnleQuality = (quality: any) => {
+
+    setChangeQuality({...ChangeQuality, quality:quality })
+
+  }
   return (
-    <ThemeContext.Provider value={{ Path, setPath, AllDetail, SetAllDetail, Warning, SetWaning, PlayListLoading, setPlayListLoading, CardLoading, setCardLoading, setAllListOfQuaility, ChangeQuality, setChangeQuality, }}>
+    <ThemeContext.Provider value={{setIsError, Path, setPath, AllDetail, SetAllDetail, Warning, SetWaning, PlayListLoading, setPlayListLoading, CardLoading, setCardLoading, setAllListOfQuaility, ChangeQuality, setChangeQuality, }}>
       <div>
         <PathCompoment />
       </div>
+
+      
       <br />
       <div>
         <Input />
+      </div>
+
+      <div>
+        {
+          isError && <p>Error Download problems, please Try again</p>
+        }
       </div>
       <div>
         {
           PlayListLoading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
         }
         {
-          AllListOfQuaility.length > 0 && <> <select onChange={e => setChangeQuality(e.target.value)}>
+          AllListOfQuaility.length > 0 && <> 
+          
+          <p>{formatBytes(ChangeQuality.totalfilesize[ChangeQuality.quality])}</p>
+          <select value={ChangeQuality.quality} onChange={e => HandnleQuality(e.target.value)}>
             {
               AllListOfQuaility.map((quality: string) => (
                 <option>{quality}</option>
@@ -138,7 +163,7 @@ const App = () => {
             }
           </select>
           </>}
-        <button disabled={AllListOfQuaility.length === 0} type="button" onClick={() => All_Download_Video(ChangeQuality)}>Download</button>
+        <button disabled={AllListOfQuaility.length === 0} type="button" onClick={() => All_Download_Video(ChangeQuality.quality)}>Download</button>
         <br />
         {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
       </div>
@@ -157,7 +182,7 @@ const App = () => {
           ))
         }
         {
-          CardLoading && <p>Loading</p>
+          CardLoading && <h1>*******Loading******</h1>
         }
       </div>
     </ThemeContext.Provider>

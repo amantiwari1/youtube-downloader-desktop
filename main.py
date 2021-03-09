@@ -12,11 +12,17 @@ def Add_Details(url):
     """ This function is where to get all details in youtube in a video 
     through url and return all details in youtube to javascript
     """
-    if not function.Check_Url(url):
-        return ["Wrong link", ""]
-    YoutubeObject = youtube.youtube(url)
-    AllDetails = YoutubeObject.Get_Data_Details()
-    return AllDetails
+
+
+    try:
+        if not function.Check_Url(url):
+            return ["Wrong link", ""]
+        YoutubeObject = youtube.youtube(url)
+        AllDetails = YoutubeObject.Get_Data_Details()
+        return AllDetails
+    except:
+        eel.isErrorDownload()
+
 
 
 @eel.expose
