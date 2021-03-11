@@ -1,2 +1,1 @@
-
-python -m eel main.py build --onedir  --windowed --noconfirm
+python -m eel main.py build --onefile  --console --noconfirm --add-data ".\ffmpeg.exe;."

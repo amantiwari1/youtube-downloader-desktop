@@ -28,6 +28,7 @@ class youtube:
         out_file.close()
 
         self.maps = {}
+        self.subtitles = {}
 
 
     def Get_Data_Details(self):
@@ -47,6 +48,7 @@ class youtube:
         
         self.Get_Detail_Quality_Available()
 
+        
 
         return {
             "url": self.url,
@@ -64,19 +66,37 @@ class youtube:
         return ['144p', '240p', '360p', '480p', '720p', 'tiny']"""
         
 
-        for format in self.data["formats"]:
-            format_note = format["format_note"] 
+        list_of_quality = ['144p60 HDR', '240p60 HDR', '360p60 HDR', '480p60 HDR', '720p60 HDR', '1080p60 HDR' , '1440p60' , '1440p60 HDR' , '2160p60' ,'2160p60 HDR']
 
-            if  not format_note  in self.maps:
-                self.maps[format_note] = {
-                    "format_note":format_note,
-                    "Video_url":format["url"],
-                    "filesize":format["filesize"]
-                }
-        
-
+        # for i in self.data['subtitles']:
+        #     self.subtitles[isoLangs[i]] = data['subtitles'][i][4]['url']
             
 
+        # for i in self.data['automatic_captions']:
+        #     self.subtitles[isoLangs[i] + 'automatic caption'] = data['automatic_captions'][i][4]['url']
+
+
+        for format in self.data["formats"]:
+            format_note = format["format_note"]
+            url = format["url"]
+            filesize = format["filesize"]
+            ext = format['ext']
+            
+            data = {
+                "format_note":format_note,
+                "Video_url":url,
+                "filesize":filesize,
+                'ext':ext
+            }
+                
+            if format_note ==  'tiny' and ext == 'm4a':
+                self.maps[format['ext']] = data
+            elif ext == 'mp4':
+                self.maps[format_note] = data
+            elif format_note in list_of_quality:
+                self.maps[format_note] = data
+
+            
 
 
 

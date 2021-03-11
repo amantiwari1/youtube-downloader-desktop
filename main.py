@@ -12,16 +12,17 @@ def Add_Details(url):
     """ This function is where to get all details in youtube in a video 
     through url and return all details in youtube to javascript
     """
-
+    if not function.Check_Url(url):
+            return ["Wrong link", ""]
 
     try:
-        if not function.Check_Url(url):
-            return ["Wrong link", ""]
+        
         YoutubeObject = youtube.youtube(url)
         AllDetails = YoutubeObject.Get_Data_Details()
         return AllDetails
+        
     except:
-        eel.isErrorDownload()
+        eel.isErrorDownload("This link might be problem and try again")
 
 
 
@@ -109,8 +110,9 @@ def start_eel(develop):
         page = {'port': 3000}
     else:
         directory = 'build'
-        app = 'chrome'
+        app = 'chrome-app'
         page = 'index.html'
+
     eel.init(directory, ['.tsx', '.ts', '.jsx', '.js', '.html'])
 
     eel_kwargs = dict(
