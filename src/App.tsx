@@ -3,6 +3,8 @@ import { Card } from './components/Card';
 import { DetailsReducer } from "./Reducer";
 import { PathCompoment } from "./components/Path";
 import { Input } from "./components/Input"
+import {ThemeProvider} from "styled-components";
+import { lightTheme, darkTheme, GlobalStyle } from "./components/Themes"
 
 
 // this is eel 
@@ -26,7 +28,6 @@ interface MyContextType {
   ChangeQuality: any;
   setChangeQuality: any;
   setIsError: any;
-
 }
 
 
@@ -59,7 +60,12 @@ const App = () => {
   const [CardLoading, setCardLoading] = useState(false)
   const [AllListOfQuaility, setAllListOfQuaility] = useState([])
   const [ChangeQuality, setChangeQuality] = useState({ totalfilesize: {}, quality: "" })
-  const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState({isError: false,  text : ""})
+  const [theme, setTheme] = useState('light');
+  const themeToggler = () => {
+    theme === 'light' ? setTheme('dark') : setTheme('light')
+}
+
 
 
 
@@ -68,8 +74,9 @@ const App = () => {
   function Set_Download_Percent(data: any) {
     SetAllDetail({ data, type: 'updateDownloadPercent' })
   }
-  function isErrorDownload() {
-    setIsError(!isError)
+  function isErrorDownload(text: string) {
+    setIsError({isError:!isError, text:text})
+    SetAllDetail({ type: 'empty' });
   }
 
   // this Set_Download_Percent will be sent in python and 
@@ -116,10 +123,14 @@ function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0
 
 
   const All_Download_Video = (Quality: string) => {
-    AllDetail.map((data: any) => {
-      const { Video_url } = data.videoquality[Quality]
 
-      window.eel.Download_video({ title: data.title, urlvideo: Video_url, url: data.url, path: Path, audiourl: data.videoquality['tiny'].Video_url})
+
+    AllDetail.map(async (data: any) => {
+      const { Video_url, ext } = data.videoquality[Quality]
+      await window.eel.Download_video({ title: data.title, urlvideo: Video_url, url: data.url, path: Path, audiourl: data.videoquality['m4a'].Video_url, ext:ext})
+      (() => {
+        
+      })
       return 0;
     })
   }
@@ -131,6 +142,10 @@ function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0
 
   }
   return (
+
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+      <GlobalStyle/>
+      <button onClick={themeToggler}>Switch Theme</button>
     <ThemeContext.Provider value={{setIsError, Path, setPath, AllDetail, SetAllDetail, Warning, SetWaning, PlayListLoading, setPlayListLoading, CardLoading, setCardLoading, setAllListOfQuaility, ChangeQuality, setChangeQuality, }}>
       <div>
         <PathCompoment />
@@ -144,7 +159,7 @@ function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0
 
       <div>
         {
-          isError && <p>Error Download problems, please Try again</p>
+          isError.isError && <p>{isError.text}</p>
         }
       </div>
       <div>
@@ -163,7 +178,7 @@ function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0
             }
           </select>
           </>}
-        <button disabled={AllListOfQuaility.length === 0} type="button" onClick={() => All_Download_Video(ChangeQuality.quality)}>Download</button>
+        <button disabled={AllDetail.length === 0} type="button" onClick={() => All_Download_Video(ChangeQuality.quality)}>Download</button>
         <br />
         {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
       </div>
@@ -178,7 +193,7 @@ function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0
       <div>
         {
           AllDetail.map((data: any) => (
-            <Card handleRemoveItem={SetAllDetail} path={Path} data={data}></Card>
+            <Card  key={data.title}  handleRemoveItem={SetAllDetail} path={Path} data={data}></Card>
           ))
         }
         {
@@ -186,6 +201,7 @@ function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0
         }
       </div>
     </ThemeContext.Provider>
+    </ThemeProvider>
   );
 
 }

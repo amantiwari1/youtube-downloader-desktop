@@ -32,6 +32,7 @@ const Input = () => {
         // after it will get all details of youtube a video 
         // through 'message'  and all details stored value to AllDetails 
         // split mean 2 url in textarea into ["url", "url"]
+        
 
         for (let i = 0; i < AllUrl.length; i++)  
          {
@@ -43,18 +44,23 @@ const Input = () => {
                     if (AllDetail.every((obj: any) => obj.url !== url)) {
                          setCardLoading(true)
                          await window.eel.Add_Details(url)((message: any) => {
-                            SetAllDetail({ message, type: 'add' });
+
+                            if (message !== true) {
+                                SetAllDetail({ message, type: 'add' });
+                            }  
                             setCardLoading(false)
+                            
 
                         })
                     }
                 } else if (url.match(playlist)) {
                     setPlayListLoading(true)
-                     window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
-                        console.log(data);
+                    await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
 
                         data.map((message: any) => {
-                            SetAllDetail({ message, type: 'add' });
+                            if (message !== true) {
+                                SetAllDetail({ message, type: 'add' });
+                            }  
                             return 0;
                         })
                         setPlayListLoading(false)
