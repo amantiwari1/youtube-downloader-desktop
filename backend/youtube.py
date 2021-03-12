@@ -20,12 +20,8 @@ class youtube:
                 with ydl:
                     self.data = ydl.extract_info(url, download=False) # get the all details from url and store in self.data
             except:
-                print("errorrrrrr")
-                eel.isErrorDownload()
+                eel.isErrorDownload('Link problem')
         
-        out_file = open("myfile.json", "w")  
-        json.dump(self.data, out_file, indent = 6)   
-        out_file.close()
 
         self.maps = {}
         self.subtitles = {}
