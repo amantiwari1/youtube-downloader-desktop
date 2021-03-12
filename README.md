@@ -23,11 +23,11 @@
 ## Installation
  
 ```shell
-python -m venv pip
+python -m venv .
 
 .\pip\Scripts\activate
 
-python install -r requirement.txt
+pip install -r requirement.txt
 
 yarn install
 ```
