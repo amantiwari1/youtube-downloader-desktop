@@ -118,7 +118,7 @@ def start_eel(develop):
     eel_kwargs = dict(
         host='localhost',
         port=8080,
-        size=(400, 800),
+        size=(800, 800),
     )
     try:
         eel.start(page, mode="chrome", **eel_kwargs)
