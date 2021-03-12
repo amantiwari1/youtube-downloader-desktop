@@ -16,10 +16,12 @@ def Add_Details(url):
             return ["Wrong link", ""]
 
     try:
-        
-        YoutubeObject = youtube.youtube(url)
-        AllDetails = YoutubeObject.Get_Data_Details()
-        return AllDetails
+        if function.is_connected():
+            YoutubeObject = youtube.youtube(url)
+            AllDetails = YoutubeObject.Get_Data_Details()
+            return AllDetails
+        else:
+            eel.isErrorDownload("Please Check your Internet")
         
     except:
         eel.isErrorDownload("This link might be problem and try again")
