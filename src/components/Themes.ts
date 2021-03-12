@@ -29,10 +29,16 @@ export const darkTheme: DefaultTheme = {
 }
 
 export const GlobalStyle = createGlobalStyle`
-html {
+
+* {
     box-sizing: border-box;
+    margin:0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+  }
+
+html {
     scroll-behavior: smooth;
-    text-align: center;
   }
 body {
   min-height: 100vh;

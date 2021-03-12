@@ -1,33 +1,45 @@
-import React, { useContext } from 'react'
-
+import React, { useContext, useState } from 'react'
 import { ThemeContext } from "../App";
 
 
 
+
 const PathCompoment = () => {
-  const context = useContext(ThemeContext)
+  const { Path, setPath } = useContext(ThemeContext)
 
+  const [isOpen, setIsOpen] = useState(false)
+  const [isSelect, setisSelect] = useState(false)
 
-  const { Path, setPath } = context
-  const Select_folder = () => {
-    window.eel.Select_folder()((getpath: string) => {
+  
+  const Select_folder = async () => {
+    setisSelect(true)
+    await window.eel.Select_folder()(async (getpath: string) => {
       if (getpath !== "") {
         setPath(getpath)
-        window.eel.Set_Path_Folder(getpath)()
+        await window.eel.Set_Path_Folder(getpath)(
+          () => {
+          }
+        )
       }
+      setisSelect(false)
     })
   }
 
-  const Open_Folder = (path: string) => {
-    window.eel.Open_Folder(path)()
+  const Open_Folder = async (path: string) => {
+    setIsOpen(true)
+    await window.eel.Open_Folder(path)(
+      () => {
+        setIsOpen(false)
+      }
+    )
   }
 
   return (
     <>
       <label>Save a video</label>
       <p>{Path}</p>
-      <button onClick={Select_folder} >Select</button>
-      <button onClick={() => Open_Folder(Path)} >Open</button>
+      <button disabled={isSelect} onClick={Select_folder} >Select</button>
+      <button disabled={isOpen} onClick={() => Open_Folder(Path)} >Open</button>
     </>
   )
 }
