@@ -23,7 +23,7 @@
 ## Installation
  
 ```shell
-python -m venv .
+python -m venv pip
 
 .\pip\Scripts\activate
 
