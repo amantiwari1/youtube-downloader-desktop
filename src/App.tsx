@@ -6,6 +6,7 @@ import Main from './components/main'
 import styled from 'styled-components';
 import { Setting } from './components/Setting';
 import { AiFillSetting } from 'react-icons/ai';
+import {Container} from 'react-bootstrap'
 
 
 
@@ -146,6 +147,7 @@ const App = () => {
         themeToggler,
         theme,
         }}>
+      <Container>
 
 
         <Setting showModal={showModal} setShowModal={setShowModal} />
@@ -156,6 +158,7 @@ const App = () => {
 
         <Main />
       
+      </Container>
       </ThemeContext.Provider>
     </ThemeProvider>
   );

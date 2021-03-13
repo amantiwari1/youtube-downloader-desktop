@@ -48,7 +48,7 @@ const PathCompoment = () => {
       <Colu xs={4} >
         <button disabled={isSelect} onClick={Select_folder} >Change Path</button>
       </Colu>
-     
+
     </Rowu>
   )
 }
