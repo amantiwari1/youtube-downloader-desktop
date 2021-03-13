@@ -1,11 +1,18 @@
 import React, { useEffect, useCallback, useContext } from 'react';
 import { useSpring, animated } from 'react-spring';
 import styled from 'styled-components';
-import { MdClose } from 'react-icons/md';
+import { IoMdArrowRoundBack } from 'react-icons/io';
 import { PathCompoment } from './Path'
 import { ThemeContext } from '../App'
 import { BsToggleOff, BsToggleOn } from 'react-icons/bs';
+import {  Col, Row } from "react-bootstrap";
 
+
+const Colu = styled(Col)`
+
+    
+
+`
 
 
 
@@ -17,7 +24,7 @@ const Background = styled.div`
 `;
 
 const ModalWrapper = styled.div`
-width: 100%;
+    width: 100%;
   min-height: 100vh;
   background: ${props => props.theme.background};
   color: ${props => props.theme.textColor};
@@ -29,7 +36,7 @@ const ModalContent = styled.div`
   color: ${props => props.theme.textColor};
 `;
 
-const CloseModalButton = styled(MdClose)`
+const CloseModalButton = styled(IoMdArrowRoundBack)`
   cursor: pointer;
   width: 32px;
   height: 32px;
@@ -38,7 +45,7 @@ const CloseModalButton = styled(MdClose)`
 `;
 
 
-export const  Setting  = ({ showModal, setShowModal }) => {
+export const Setting = ({ showModal, setShowModal }) => {
 
 
     const { theme, themeToggler } = useContext(ThemeContext)
@@ -48,7 +55,7 @@ export const  Setting  = ({ showModal, setShowModal }) => {
             duration: 250
         },
         opacity: showModal ? 1 : 0,
-        transform: showModal ? `translateY(0%)` : `translateY(-100%)`
+        transform: showModal ? `translateX(0%)` : `translateX(-100%)`
     });
 
 
@@ -72,29 +79,41 @@ export const  Setting  = ({ showModal, setShowModal }) => {
 
 
     return (
-
-
         <>
-            {showModal ? (
-                <Background> 
-                    <animated.div style={animation}>
-                        <ModalWrapper >
-                            <ModalContent>
-                                <CloseModalButton
-                                    onClick={() => setShowModal(prev => !prev)}
-                                    />
-                                <PathCompoment />
 
-                                <p>Dark Mode</p>
-                                {
-                                    theme === 'light' ? <BsToggleOff onClick={themeToggler}></BsToggleOff> : <BsToggleOn onClick={themeToggler}></BsToggleOn>
-                                }
-                            </ModalContent>
-                        </ModalWrapper>
-                    </animated.div>
-                </Background>
-            ) : null}
+            {
+                showModal ? (
+                    <Background>
+                        <animated.div style={animation}>
+                            <ModalWrapper >
+                                <ModalContent>
+                                    <Row>
 
-            </>
+                                        <Colu xs={12}>
+                                            <CloseModalButton onClick={() => setShowModal(prev => !prev)} />
+                                        </Colu>
+
+                                        <Colu xs={12}>
+                                            <PathCompoment />
+                                        </Colu>
+
+                                        <Colu xs={4}>
+                                            <p>Dark Mode</p>
+                                        </Colu>
+
+                                        <Colu xs={8}>
+                                            {
+                                                theme === 'light' ? <BsToggleOff onClick={themeToggler}></BsToggleOff> : <BsToggleOn onClick={themeToggler}></BsToggleOn>
+                                            }
+                                        </Colu>
+                                        
+                                    </Row>
+                                </ModalContent>
+                            </ModalWrapper>
+                        </animated.div>
+                    </Background >
+                ) : null}
+        </>
+
     );
 }
