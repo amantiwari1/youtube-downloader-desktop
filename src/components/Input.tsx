@@ -6,7 +6,6 @@ import { Col, Row } from "react-bootstrap";
 const TextArea = styled.textarea`
     border: none;
     border-radius: 4px;
-    overflow: auto; 
     width: 100%;       
     &:hover,
     &:focus {
@@ -16,6 +15,8 @@ const TextArea = styled.textarea`
     &::placeholder {
     font-size: 20px;
     }
+    margin: 2px;
+
 
 `
 
@@ -27,7 +28,7 @@ const Colu = styled(Col)`
 `
 
 const DownloadAll = styled.button`
-    min-width: 100px;
+    width: 100%;       
     padding: 16px 32px;
     border-radius: 4px;
     border: none;
@@ -35,6 +36,7 @@ const DownloadAll = styled.button`
     color: #fff;
     font-size: 24px;
     cursor: pointer;  
+    margin: 2px;
 `
 
 const Rowu = styled(Row)`

@@ -2,6 +2,17 @@ import React, { useContext } from 'react';
 import { Card } from './Card';
 import { Input } from "./Input"
 import { ThemeContext } from "../App";
+import { Col } from "react-bootstrap";
+import styled from 'styled-components';
+
+
+const Colu = styled(Col)`
+
+    padding:1px;
+    z-index: 0;
+
+`
+
 
 const Main = () => {
 
@@ -68,51 +79,72 @@ const Main = () => {
     }
     return (
         <>
-            
+            <Colu xs={12} >
                 <Input />
+            </Colu>
+            <Colu xs={12}>
+                <Colu xs={12}>
+                    {
+                        isError.isError && <p>{isError.text}</p>
+                    }
+                </Colu>
+                <div>
+                    <Colu>
+                        {
+                            PlayListLoading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
+                        }
+                    </Colu>
+                    <Colu>
+                        {
+                            AllListOfQuaility.length > 0 && <>
+                                <Colu xs={6}>
 
-            <div>
-                {
-                    isError.isError && <p>{isError.text}</p>
-                }
-            </div>
-            <div>
-                {
-                    PlayListLoading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
-                }
-                {
-                    AllListOfQuaility.length > 0 && <>
+                                    <label>Overall FileSize : </label>
+                                </Colu>
+                                <Colu xs={6}>
 
-                        <p>{formatBytes(ChangeQuality.totalfilesize[ChangeQuality.quality])}</p>
-                        <select value={ChangeQuality.quality} onChange={e => HandnleQuality(e.target.value)}>
-                            {
-                                AllListOfQuaility.map((quality: string) => (
-                                    <option key={quality} >{quality}</option>
-                                ))
-                            }
-                        </select>
-                    </>}
+                                    <p>{formatBytes(ChangeQuality.totalfilesize[ChangeQuality.quality])}</p>
+                                </Colu>
+                                <Colu xs={6}>
+
+                                    <label>Overall Quality : </label>
+                                </Colu>
+                                <Colu xs={6}>
+
+                                    <select value={ChangeQuality.quality} onChange={e => HandnleQuality(e.target.value)}>
+                                        {
+                                            AllListOfQuaility.map((quality: string) => (
+                                                <option key={quality} >{quality}</option>
+                                            ))
+                                        }
+                                    </select>
+                                </Colu>
+                            </>}
+                        <br />
+                    </Colu>
+                    {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
+                </div>
+                <div>
+                    {
+                        Warning.map(url => (
+                            <p key={url} >{url} is Wrong Link Please fix it</p>
+                        ))
+                    }
+                </div>
                 <br />
-                {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
-            </div>
-            <div>
-                {
-                    Warning.map(url => (
-                        <p key={url} >{url} is Wrong Link Please fix it</p>
-                    ))
-                }
-            </div>
-            <br />
-            <div>
-                {
-                    AllDetail.map((data: any) => (
-                        <Card key={data.title} handleRemoveItem={SetAllDetail} path={Path} data={data}></Card>
-                    ))
-                }
-                {
-                    CardLoading && <h1>*******Loading******</h1>
-                }
-            </div>
+            </Colu>
+            <Colu xs={12}>
+                <div>
+                    {
+                        AllDetail.map((data: any) => (
+                            <Card key={data.title} handleRemoveItem={SetAllDetail} path={Path} data={data} />
+                        ))
+                    }
+                    {
+                        CardLoading && <h1>*******Loading******</h1>
+                    }
+                </div>
+            </Colu>
         </>
     );
 
