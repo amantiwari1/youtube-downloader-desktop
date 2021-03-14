@@ -43,8 +43,6 @@ const Rowu = styled(Row)`
     margin: 0;
 `
 
-
-
 const Input = () => {
 
     const { ChangeQuality, setIsError, SetWaning, AllDetail, SetAllDetail, setCardLoading, setPlayListLoading, Path } = useContext(ThemeContext)
@@ -63,25 +61,25 @@ const Input = () => {
     }
 
 
-    const Get_Detail = async (Url: String) => {
-
-
-
-
+    const Get_Detail = async (textarea: String) => {
         setIsError(false)
-
-        // eslint-disable-next-line
-        var oneVideoUrl = new RegExp(`https:\/\/www\.youtube\.com\/watch?.*=...........`);
-        // eslint-disable-next-line
-        var playlistUrl = new RegExp(`https://www.youtube.com/playlist`);
+        let oneVideoUrl = (
+            /^https:\/\/www\.youtube\.com\/watch\?v=\S{11}\s*$/
+        )
+        let playlistUrl = (
+            /^https:\/\/www\.youtube\.com\/playlist\?list=\S{34}\s*$/
+        )
+        let playlistUrlWithTheFirstVideoSpecified = (
+            /^https:\/\/www\.youtube\.com\/watch\?v=\S{11}&list=\S{34}\s*$/
+        )
         SetAllDetail({ type: 'empty' });
         SetWaning([]);
 
-        if (Url === "") {
+        if (textarea === "") {
             return 0;
         }
 
-        const AllUrl = Url.split('\n')
+        const AllUrl = textarea.split('\n');
 
         // this function come from python line 17 in main.py 
         // then call this function then it will run in python
@@ -89,15 +87,17 @@ const Input = () => {
         // through 'message'  and all details stored value to AllDetails 
         // split mean 2 url in textarea into ["url", "url"]
 
-
-        for (let i = 0; i < AllUrl.length; i++) {
-
-            let url = AllUrl[i]
+        for (let url of AllUrl) {
+            let isOneVideoUrl = oneVideoUrl.test(url);
+            let isPlaylistUrl = (
+                playlistUrl.test(url) ||
+                playlistUrlWithTheFirstVideoSpecified.test(url)
+            );
 
             if (url !== "") {
 
                 // one video url  
-                if (url.match(oneVideoUrl)) {
+                if (isOneVideoUrl) {
                     if (AllDetail.every((obj: any) => obj.url !== url)) {
                         setCardLoading(true)
                         await window.eel.Add_Details(url)((message: any) => {
@@ -106,12 +106,11 @@ const Input = () => {
                                 SetAllDetail({ message, type: 'add' });
                             }
                             setCardLoading(false)
-
-
                         })
                     }
+
                 // playlist url
-                } else if (url.match(playlistUrl)) {
+                } else if (isPlaylistUrl) {
                     setPlayListLoading(true)
                     await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
 
@@ -131,25 +130,27 @@ const Input = () => {
                 }
             }
         }
-
-
         return false;
-
-
-
     }
-
-
-
 
 
     return (
             <Rowu>
                 <Colu xs={9} >
-                    <TextArea placeholder="Enter multiple url youtube video " rows={3}  onChange={(e) => Get_Detail(e.target.value)} />
+                    <TextArea 
+                        placeholder="Enter multiple url youtube video" 
+                        rows={3}  
+                        onChange={(e) => Get_Detail(e.target.value)} 
+                    />
                 </Colu>
                 <Colu xs={3}>
-                    <DownloadAll disabled={AllDetail.length === 0} type="button" onClick={() => All_Download_Video(ChangeQuality.quality)}>Download</DownloadAll>
+                    <DownloadAll 
+                        disabled={AllDetail.length === 0} 
+                        type="button" 
+                        onClick={() => All_Download_Video(ChangeQuality.quality)}
+                    >
+                        Download
+                    </DownloadAll>
                 </Colu>
             </Rowu>
     )
