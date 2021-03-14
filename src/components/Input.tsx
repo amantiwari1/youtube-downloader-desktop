@@ -71,9 +71,9 @@ const Input = () => {
         setIsError(false)
 
         // eslint-disable-next-line
-        var re = new RegExp(`https:\/\/www\.youtube\.com\/watch?.*=...........`);
+        var oneVideoUrl = new RegExp(`https:\/\/www\.youtube\.com\/watch?.*=...........`);
         // eslint-disable-next-line
-        var playlist = new RegExp(`https://www.youtube.com/playlist`);
+        var playlistUrl = new RegExp(`https://www.youtube.com/playlist`);
         SetAllDetail({ type: 'empty' });
         SetWaning([]);
 
@@ -95,7 +95,9 @@ const Input = () => {
             let url = AllUrl[i]
 
             if (url !== "") {
-                if (url.match(re)) {
+
+                // one video url  
+                if (url.match(oneVideoUrl)) {
                     if (AllDetail.every((obj: any) => obj.url !== url)) {
                         setCardLoading(true)
                         await window.eel.Add_Details(url)((message: any) => {
@@ -108,7 +110,8 @@ const Input = () => {
 
                         })
                     }
-                } else if (url.match(playlist)) {
+                // playlist url
+                } else if (url.match(playlistUrl)) {
                     setPlayListLoading(true)
                     await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
 
@@ -121,6 +124,8 @@ const Input = () => {
                         setPlayListLoading(false)
                     })
                 }
+
+                // Url is wrong
                 else {
                     SetWaning((arr: any) => [...arr, url]);
                 }
