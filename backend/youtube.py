@@ -44,8 +44,7 @@ class youtube:
         return {
             "url": self.url,
             "title": title,
-            "thumbnail": thumbnail,
-            "formats": formats, 
+            "thumbnail": thumbnail, 
             "downloadPercent": "",
             "videoquality": self.maps
         }
