@@ -39,18 +39,13 @@ class youtube:
         """
         title = self.data["title"]
         thumbnail = self.data['thumbnail']
-        formats = self.data["formats"]
-
-        
         self.Get_Detail_Quality_Available()
-
-        
 
         return {
             "url": self.url,
             "title": title,
             "thumbnail": thumbnail,
-            "formats": formats,
+            "formats": formats, 
             "downloadPercent": "",
             "videoquality": self.maps
         }
