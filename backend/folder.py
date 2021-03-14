@@ -3,7 +3,8 @@ import json
 
 
 def Generate_JSON():
-    path = os.path.expanduser("~") + '\Downloads\\video'
+    user_home = os.path.expanduser("~")
+    path = os.path.sep.join([user_home, 'Downloads', 'video'])
     if not os.path.isdir(path):
         os.mkdir(path)
     data = { "path": path }

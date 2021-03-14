@@ -1,10 +1,12 @@
 import re
 import string
 from urllib.parse import urlparse
+import socket
 
 
 def atoi(text):
         return int(text) if text.isdigit() else text
+
 
 def natural_keys(text):
     """
@@ -22,6 +24,7 @@ def natural_keys(text):
     """
     return [atoi(c) for c in re.split('(\d+)', text)]
 
+
 def format_filename(s):
     """Take a string and return a valid filename constructed from the string.
 Uses a whitelist approach: any characters not present in valid_chars are
@@ -33,9 +36,12 @@ and append a file extension like '.txt', so I avoid the potential of using
 an invalid filename.
 """
     valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-    filename = ''.join(c for c in s if c in valid_chars)
-    # filename = filename.replace(' ', '_')  # I don't like spaces in filenames.
-    return filename
+    def is_valid_chars(element): 
+        return element in valid_chars
+    filename_without_invalid_chars = (''
+        .join(filter(is_valid_chars, s))
+        .replace(' ', '_'))
+    return filename_without_invalid_chars
 
 
 def Check_Url(url):
@@ -45,8 +51,6 @@ def Check_Url(url):
         return all([result.scheme, result.netloc])
     except ValueError:
         return False
-
-import socket
 
 
 def is_connected():
