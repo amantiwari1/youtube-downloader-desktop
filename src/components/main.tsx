@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Card } from './Card';
 import { Input } from "./Input"
 import { ThemeContext } from "../App";
-import { Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import styled from 'styled-components';
 
 
@@ -11,6 +11,10 @@ const Colu = styled(Col)`
     padding:1px;
     z-index: 0;
 
+`
+
+const Rowu = styled(Row)`
+    margin: 0;
 `
 
 
@@ -97,28 +101,31 @@ const Main = () => {
                     <Colu>
                         {
                             AllListOfQuaility.length > 0 && <>
-                                <Colu xs={6}>
+                            <Rowu>
+
+                                <Colu xs={3}>
 
                                     <label>Overall FileSize : </label>
                                 </Colu>
-                                <Colu xs={6}>
+                                <Colu xs={3}>
 
                                     <p>{formatBytes(ChangeQuality.totalfilesize[ChangeQuality.quality])}</p>
                                 </Colu>
-                                <Colu xs={6}>
+                                <Colu xs={3}>
 
                                     <label>Overall Quality : </label>
                                 </Colu>
-                                <Colu xs={6}>
+                                <Colu xs={3}>
 
                                     <select value={ChangeQuality.quality} onChange={e => HandnleQuality(e.target.value)}>
                                         {
                                             AllListOfQuaility.map((quality: string) => (
                                                 <option key={quality} >{quality}</option>
-                                            ))
-                                        }
+                                                ))
+                                            }
                                     </select>
                                 </Colu>
+                            </Rowu>
                             </>}
                         <br />
                     </Colu>

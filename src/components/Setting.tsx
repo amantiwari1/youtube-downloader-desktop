@@ -14,6 +14,10 @@ const Colu = styled(Col)`
 
 `
 
+const Rowu = styled(Row)`
+  margin: 0;
+`
+
 
 
 const Background = styled.div`
@@ -87,7 +91,7 @@ export const Setting = ({ showModal, setShowModal }) => {
                         <animated.div style={animation}>
                             <ModalWrapper >
                                 <ModalContent>
-                                    <Row>
+                                    <Rowu>
 
                                         <Colu xs={12}>
                                             <CloseModalButton onClick={() => setShowModal(prev => !prev)} />
@@ -107,7 +111,7 @@ export const Setting = ({ showModal, setShowModal }) => {
                                             }
                                         </Colu>
                                         
-                                    </Row>
+                                    </Rowu>
                                 </ModalContent>
                             </ModalWrapper>
                         </animated.div>
