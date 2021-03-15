@@ -82,6 +82,15 @@ const Rowu = styled(Row)`
 const Input = () => {
 
     const {  AllDetail, SetAllDetail, state, dispatch } = useContext(ThemeContext)
+
+    const isValidVideoParam = (vParam: string): boolean => {
+        let videoParamLength = 11;
+        return vParam.length === videoParamLength;
+    } 
+
+    const isValidListParam = (listParam: string): boolean => {
+        return true;
+    }
  
     const All_Download_Video = (Quality: string) => {
         AllDetail.map(async (data: any) => {
@@ -146,9 +155,9 @@ const Input = () => {
             if (isValidLinkPattern.test(url)) {
                 urlParams = (new URL(url)).searchParams;
                 if (urlParams.has('list')) {
-                    isPlaylistUrl = true;
+                    isPlaylistUrl = isValidListParam(urlParams.get('list'));
                 } else if (urlParams.has('v')) {
-                    isOneVideoUrl = true;
+                    isOneVideoUrl = isValidVideoParam(urlParams.get('v'));
                 }
             }
 
