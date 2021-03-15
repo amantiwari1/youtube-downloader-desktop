@@ -3,4 +3,8 @@ https://www.youtube.com/watch?v=61QSHrOuGEA
 https://www.youtube.com/watch?v=jDV5q37rGlg 
 https://www.youtube.com/watch?v=A_AQ7-p9rak 
 
-https://www.youtube.com/playlist?list=PLdVLzUkC2gsRQki0ZnilX7FIz1ngsIqPe    
+https://www.youtube.com/playlist?list=PLdVLzUkC2gsRQki0ZnilX7FIz1ngsIqPe  
+
+# playlists that the regex's don't match: 
+https://www.youtube.com/watch?v=2CnxonDrhdE&list=OLAK5uy_m5guXBtnk3cg9LtiH5uly765_7y_7gQ6Y
+https://www.youtube.com/watch?v=QT0-ZX_e83E&list=PL85E4D2A86E1AE945
