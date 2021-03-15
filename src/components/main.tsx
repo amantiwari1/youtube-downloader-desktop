@@ -3,19 +3,9 @@ import { Card } from './Card';
 import { Input } from "./Input"
 import { ThemeContext } from "../App";
 import { Col, Row } from "react-bootstrap";
-import styled from 'styled-components';
 
 
-const Colu = styled(Col)`
 
-    padding:1px;
-    z-index: 0;
-
-`
-
-const Rowu = styled(Row)`
-    margin: 0;
-`
 
 
 const Main = () => {
@@ -82,66 +72,72 @@ const Main = () => {
 
     }
     return (
-        <>
-            <Colu xs={12} >
+        <Row>
+            <Col xs={12} >
                 <Input />
-            </Colu>
-            <Colu xs={12}>
-                <Colu xs={12}>
-                    {
-                        isError.isError && <p>{isError.text}</p>
-                    }
-                </Colu>
-                <div>
-                    <Colu>
+            </Col>
+            <Col xs={12}>
+
+                <Row>
+                    <br />
+                    <Col xs={12}>
+                        {
+                            isError.isError && <p>{isError.text}</p>
+                        }
+                    </Col>
+
+                    <Col xs={12}>
                         {
                             PlayListLoading && <p>Please wait.. because your link are playlist. it maybe longer time</p>
                         }
-                    </Colu>
-                    <Colu>
+                    </Col>
+
+                    <Col xs={12}>
                         {
-                            AllListOfQuaility.length > 0 && <>
-                            <Rowu>
+                            AllListOfQuaility.length > 0 &&
+                            <Row>
 
-                                <Colu xs={3}>
-
+                                <Col xs={3}>
                                     <label>Overall FileSize : </label>
-                                </Colu>
-                                <Colu xs={3}>
+                                </Col>
+
+                                <Col xs={3}>
 
                                     <p>{formatBytes(ChangeQuality.totalfilesize[ChangeQuality.quality])}</p>
-                                </Colu>
-                                <Colu xs={3}>
+                                </Col>
+
+                                <Col xs={3}>
 
                                     <label>Overall Quality : </label>
-                                </Colu>
-                                <Colu xs={3}>
+                                </Col>
+
+                                <Col xs={3}>
 
                                     <select value={ChangeQuality.quality} onChange={e => HandnleQuality(e.target.value)}>
                                         {
                                             AllListOfQuaility.map((quality: string) => (
                                                 <option key={quality} >{quality}</option>
-                                                ))
-                                            }
+                                            ))
+                                        }
                                     </select>
-                                </Colu>
-                            </Rowu>
-                            </>}
-                        <br />
-                    </Colu>
-                    {/* <button type='button' onClick={Get_Detail}  >Get The youtube Detail</button> */}
-                </div>
-                <div>
-                    {
-                        Warning.map(url => (
-                            <p key={url} >{url} is Wrong Link Please fix it</p>
-                        ))
-                    }
-                </div>
-                <br />
-            </Colu>
-            <Colu xs={12}>
-                <div>
+                                </Col>
+ 
+                            </Row>
+                        }
+                    </Col>
+
+                    <Col xs={12}>
+                        {
+                            Warning.map(url => (
+                                <p key={url} >{url} is Wrong Link Please fix it</p>
+                            ))
+                        }
+                    </Col>
+                </Row>
+            </Col>
+
+            <Col xs={12}>
+                <>
                     {
                         AllDetail.map((data: any) => (
                             <Card key={data.title} handleRemoveItem={SetAllDetail} path={Path} data={data} />
@@ -150,9 +146,11 @@ const Main = () => {
                     {
                         CardLoading && <h1>*******Loading******</h1>
                     }
-                </div>
-            </Colu>
-        </>
+                </>
+            </Col>
+
+
+        </Row>
     );
 
 }

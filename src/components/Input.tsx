@@ -4,8 +4,11 @@ import styled from 'styled-components';
 import { Col, Row } from "react-bootstrap";
 
 const TextArea = styled.textarea`
+    font-size: 13px;
+    resize: none;
+    text-align: center; 
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     width: 100%;       
     &:hover,
     &:focus {
@@ -14,8 +17,29 @@ const TextArea = styled.textarea`
 
     &::placeholder {
     font-size: 20px;
+    text-align: center; 
     }
     margin: 2px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+    transition: 0.3s;
+    &:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    &::-webkit-scrollbar {
+    width: 15px;
+
+  }
+  &::-webkit-scrollbar-track {
+    background: #1d3557;
+    border-radius: 10px;
+
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #e76f51;
+    border-radius: 14px;
+    border: 3px solid #1d3557;
+  }
 
 
 `
@@ -28,15 +52,27 @@ const Colu = styled(Col)`
 `
 
 const DownloadAll = styled.button`
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+    transition: 0.3s;
+    &:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+    }
     width: 100%;       
-    padding: 16px 32px;
-    border-radius: 4px;
+    padding: 13px 32px;
     border: none;
     background: #141414;
-    color: #fff;
+    color: #fff; 
     font-size: 24px;
     cursor: pointer;  
     margin: 2px;
+    border-radius: 20px;
+
+    &:disabled,
+    &[disabled] {
+        opacity: 0.3;
+        cursor: default;  
+
+    }
 `
 
 const Rowu = styled(Row)`
@@ -48,15 +84,38 @@ const Input = () => {
     const { ChangeQuality, setIsError, SetWaning, AllDetail, SetAllDetail, setCardLoading, setPlayListLoading, Path } = useContext(ThemeContext)
 
     const All_Download_Video = (Quality: string) => {
-
-
         AllDetail.map(async (data: any) => {
             const { Video_url, ext } = data.videoquality[Quality]
             await window.eel.Download_video({ title: data.title, urlvideo: Video_url, url: data.url, path: Path, audiourl: data.videoquality['m4a'].Video_url, ext: ext })
                 (() => {
-
                 })
             return 0;
+        })
+    }
+
+    const oneVideo = async (url: string) => {
+        if (AllDetail.every((obj: any) => obj.url !== url)) {
+            setCardLoading(true)
+            await window.eel.Add_Details(url)((message: any) => {
+                if (message !== true) {
+                    SetAllDetail({ message, type: 'add' });
+                }
+                setCardLoading(false)
+            })
+        }
+    }
+
+
+    const onePlaylist = async (url: string) => {
+        setPlayListLoading(true)
+        await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
+            data.map((message: any) => {
+                if (message !== true) {
+                    SetAllDetail({ message, type: 'add' });
+                }
+                return 0;
+            })
+            setPlayListLoading(false)
         })
     }
 
@@ -81,13 +140,8 @@ const Input = () => {
 
         const AllUrl = textarea.split('\n');
 
-        // this function come from python line 17 in main.py 
-        // then call this function then it will run in python
-        // after it will get all details of youtube a video 
-        // through 'message'  and all details stored value to AllDetails 
-        // split mean 2 url in textarea into ["url", "url"]
 
-        for (let url of AllUrl) {
+        for await (let url of AllUrl) {
             let isOneVideoUrl = oneVideoUrl.test(url);
             let isPlaylistUrl = (
                 playlistUrl.test(url) ||
@@ -95,35 +149,14 @@ const Input = () => {
             );
 
             if (url !== "") {
-
                 // one video url  
                 if (isOneVideoUrl) {
-                    if (AllDetail.every((obj: any) => obj.url !== url)) {
-                        setCardLoading(true)
-                        await window.eel.Add_Details(url)((message: any) => {
-
-                            if (message !== true) {
-                                SetAllDetail({ message, type: 'add' });
-                            }
-                            setCardLoading(false)
-                        })
-                    }
-
-                // playlist url
-                } else if (isPlaylistUrl) {
-                    setPlayListLoading(true)
-                    await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
-
-                        data.map((message: any) => {
-                            if (message !== true) {
-                                SetAllDetail({ message, type: 'add' });
-                            }
-                            return 0;
-                        })
-                        setPlayListLoading(false)
-                    })
+                    oneVideo(url);
                 }
-
+                // playlist url
+                else if (isPlaylistUrl) {
+                    onePlaylist(url);
+                }
                 // Url is wrong
                 else {
                     SetWaning((arr: any) => [...arr, url]);
@@ -135,24 +168,24 @@ const Input = () => {
 
 
     return (
-            <Rowu>
-                <Colu xs={9} >
-                    <TextArea 
-                        placeholder="Enter multiple url youtube video" 
-                        rows={3}  
-                        onChange={(e) => Get_Detail(e.target.value)} 
-                    />
-                </Colu>
-                <Colu xs={3}>
-                    <DownloadAll 
-                        disabled={AllDetail.length === 0} 
-                        type="button" 
-                        onClick={() => All_Download_Video(ChangeQuality.quality)}
-                    >
-                        Download
+        <Rowu>
+            <Colu xs={9} >
+                <TextArea
+                    placeholder="Enter multiple url youtube video"
+                    rows={3}
+                    onChange={(e) => Get_Detail(e.target.value)}
+                />
+            </Colu>
+            <Colu xs={3}>
+                <DownloadAll
+                    disabled={AllDetail.length === 0}
+                    type="button"
+                    onClick={() => All_Download_Video(ChangeQuality.quality)}
+                >
+                    Download
                     </DownloadAll>
-                </Colu>
-            </Rowu>
+            </Colu>
+        </Rowu>
     )
 }
 
