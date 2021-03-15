@@ -51,28 +51,28 @@ const CloseModalButton = styled(IoMdArrowRoundBack)`
 `;
 
 
-export const Setting = ({ showModal, setShowModal }) => {
+export const Setting = () => {
 
 
-    const { theme, themeToggler } = useContext(ThemeContext)
+    const { state, dispatch } = useContext(ThemeContext)
 
     const animation = useSpring({
         config: {
             duration: 250
         },
-        opacity: showModal ? 1 : 0,
-        transform: showModal ? `translateX(0%)` : `translateX(-100%)`
+        opacity: state.showModal ? 1 : 0,
+        transform: state.showModal ? `translateX(0%)` : `translateX(-100%)`
     });
 
 
 
     const keyPress = useCallback(
         e => {
-            if (e.key === 'Escape' && showModal) {
-                setShowModal(false);
+            if (e.key === 'Escape' && state.showModal) {
+                dispatch({type: 'showModalFalse'})
             }
         },
-        [setShowModal, showModal]
+        [dispatch, state.showModal]
     );
 
     useEffect(
@@ -88,7 +88,7 @@ export const Setting = ({ showModal, setShowModal }) => {
         <>
 
             {
-                showModal ? (
+                state.showModal ? (
                     <Background>
                         <animated.div style={animation}>
                             <ModalWrapper >
@@ -96,7 +96,7 @@ export const Setting = ({ showModal, setShowModal }) => {
                                     <Rowu>
 
                                         <Colu xs={12}>
-                                            <CloseModalButton onClick={() => setShowModal(prev => !prev)} />
+                                            <CloseModalButton onClick={() => dispatch({type: 'showModal'})} />
                                         </Colu>
 
                                         <Colu xs={12}>
@@ -109,7 +109,7 @@ export const Setting = ({ showModal, setShowModal }) => {
 
                                         <Colu xs={8}>
                                             {
-                                                theme === 'light' ? <BsToggleOff onClick={themeToggler}></BsToggleOff> : <BsToggleOn onClick={themeToggler}></BsToggleOn>
+                                                state.theme === 'light' ? <BsToggleOff onClick={() => dispatch({type:'theme'}) }></BsToggleOff> : <BsToggleOn onClick={() => dispatch({type:'theme'})}></BsToggleOn>
                                             }
                                         </Colu>
                                         

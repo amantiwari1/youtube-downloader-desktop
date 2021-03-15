@@ -4,7 +4,7 @@ import { Col, Row } from "react-bootstrap";
 
 
 const PathCompoment = () => {
-  const { Path, setPath } = useContext(ThemeContext)
+  const { state, dispatch } = useContext(ThemeContext)
 
   const [isSelect, setisSelect] = useState(false) 
 
@@ -13,7 +13,7 @@ const PathCompoment = () => {
     setisSelect(true)
     await window.eel.Select_folder()(async (getpath: string) => {
       if (getpath !== "") {
-        setPath(getpath)
+        dispatch({type: "setPath" , data:getpath})
         await window.eel.Set_Path_Folder(getpath)(
           () => {
           }
@@ -32,7 +32,7 @@ const PathCompoment = () => {
         <label>Save a video</label>
       </Col>
       <Col xs={4} >
-        <p>{Path}</p>
+        <p>{state.Path}</p>
       </Col>
       <Col xs={4} >
         <button disabled={isSelect} onClick={Select_folder} >Change Path</button>

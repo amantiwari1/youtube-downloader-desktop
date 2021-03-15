@@ -78,15 +78,15 @@ const DownloadAll = styled.button`
 const Rowu = styled(Row)`
     margin: 0;
 `
-
+ 
 const Input = () => {
 
-    const { ChangeQuality, setIsError, SetWaning, AllDetail, SetAllDetail, setCardLoading, setPlayListLoading, Path } = useContext(ThemeContext)
-
+    const {  AllDetail, SetAllDetail, state, dispatch } = useContext(ThemeContext)
+ 
     const All_Download_Video = (Quality: string) => {
         AllDetail.map(async (data: any) => {
             const { Video_url, ext } = data.videoquality[Quality]
-            await window.eel.Download_video({ title: data.title, urlvideo: Video_url, url: data.url, path: Path, audiourl: data.videoquality['m4a'].Video_url, ext: ext })
+            await window.eel.Download_video({ title: data.title, urlvideo: Video_url, url: data.url, path: state.Path, audiourl: data.videoquality['m4a'].Video_url, ext: ext })
                 (() => {
                 })
             return 0;
@@ -95,19 +95,22 @@ const Input = () => {
 
     const oneVideo = async (url: string) => {
         if (AllDetail.every((obj: any) => obj.url !== url)) {
-            setCardLoading(true)
+            dispatch({type: 'CardLoading', data: true});
+
             await window.eel.Add_Details(url)((message: any) => {
                 if (message !== true) {
                     SetAllDetail({ message, type: 'add' });
                 }
-                setCardLoading(false)
+                dispatch({type: 'CardLoading', data: false});
+
             })
         }
     }
 
 
     const onePlaylist = async (url: string) => {
-        setPlayListLoading(true)
+        dispatch({type: 'PlayListLoading', data: true});
+
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
             data.map((message: any) => {
                 if (message !== true) {
@@ -115,13 +118,14 @@ const Input = () => {
                 }
                 return 0;
             })
-            setPlayListLoading(false)
+            dispatch({type: 'PlayListLoading', data: false});
         })
     }
 
 
     const Get_Detail = async (textarea: String) => {
-        setIsError(false)
+        dispatch({ data: false, type: 'isError' })
+
         let oneVideoUrl = (
             /^https:\/\/www\.youtube\.com\/watch\?v=\S{11}\s*$/
         )
@@ -132,7 +136,7 @@ const Input = () => {
             /^https:\/\/www\.youtube\.com\/watch\?v=\S{11}&list=\S{34}\s*$/
         )
         SetAllDetail({ type: 'empty' });
-        SetWaning([]);
+        dispatch({type: 'emptyWarning'});
 
         if (textarea === "") {
             return 0;
@@ -159,7 +163,7 @@ const Input = () => {
                 }
                 // Url is wrong
                 else {
-                    SetWaning((arr: any) => [...arr, url]);
+                    dispatch({type: 'Warning', data: url});
                 }
             }
         }
@@ -178,9 +182,9 @@ const Input = () => {
             </Colu>
             <Colu xs={3}>
                 <DownloadAll
-                    disabled={AllDetail.length === 0}
+                    disabled={AllDetail.length === 0} 
                     type="button"
-                    onClick={() => All_Download_Video(ChangeQuality.quality)}
+                    onClick={() => All_Download_Video(state.ChangeQuality.quality)}
                 >
                     Download
                     </DownloadAll>

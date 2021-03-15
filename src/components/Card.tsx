@@ -120,8 +120,6 @@ const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
     }
 
     useEffect(() => {
-
-
         const { format_note, Video_url, filesize, ext } = data.videoquality[Object.keys(data.videoquality)[1]]
         setChangeQuality({ video_url: Video_url, filesize: filesize, quality: format_note, ext: ext })
     }, [data.videoquality])
@@ -171,7 +169,7 @@ const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
                                 </Colu >
 
                                 <Colu xs={1}>
-                                    <Download title='start download' type="button" onClick={starting_download} >Download</Download>
+                                    <Download aria-disabled={isDownloading}  title='start download' type="button" onClick={starting_download} >Download</Download>
                                 </Colu>
 
                                 <Colu xs={1}>
