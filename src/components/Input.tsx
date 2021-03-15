@@ -124,17 +124,12 @@ const Input = () => {
 
 
     const Get_Detail = async (textarea: String) => {
-        dispatch({ data: false, type: 'isError' })
-
-        let oneVideoUrl = (
-            /^https:\/\/www\.youtube\.com\/watch\?v=\S{11}\s*$/
-        )
-        let playlistUrl = (
-            /^https:\/\/www\.youtube\.com\/playlist\?list=\S{34}\s*$/
-        )
-        let playlistUrlWithTheFirstVideoSpecified = (
-            /^https:\/\/www\.youtube\.com\/watch\?v=\S{11}&list=\S{34}\s*$/
-        )
+        let url;
+        let isOneVideoUrl;
+        let isPlaylistUrl;
+        let urlParams;
+        let isValidLinkPattern = /^https:\/\/www\.youtube\.com\/(watch|playlist)\?/;
+        dispatch({ data: false, type: 'isError' });
         SetAllDetail({ type: 'empty' });
         dispatch({type: 'emptyWarning'});
 
@@ -145,12 +140,17 @@ const Input = () => {
         const AllUrl = textarea.split('\n');
 
 
-        for await (let url of AllUrl) {
-            let isOneVideoUrl = oneVideoUrl.test(url);
-            let isPlaylistUrl = (
-                playlistUrl.test(url) ||
-                playlistUrlWithTheFirstVideoSpecified.test(url)
-            );
+        for await (url of AllUrl) {
+            isOneVideoUrl = false;
+            isPlaylistUrl = false;
+            if (isValidLinkPattern.test(url)) {
+                urlParams = (new URL(url)).searchParams;
+                if (urlParams.has('list')) {
+                    isPlaylistUrl = true;
+                } else if (urlParams.has('v')) {
+                    isOneVideoUrl = true;
+                }
+            }
 
             if (url !== "") {
                 // one video url  
