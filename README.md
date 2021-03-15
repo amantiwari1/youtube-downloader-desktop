@@ -4,14 +4,14 @@
 
 <!-- TOC -->
 
-- [07 - Youtube Downloader GUI Documentation](#07---youtube-downloader-gui-documentation)
+- [Youtube Downloader GUI Documentation](#youtube-downloader-gui-documentation)
   - [Quick Start](#quick-start)
   - [Installation](#installation)
   - [Main Files](#main-files)
 
 <!-- /TOC -->
 
-# 07 - Youtube Downloader GUI Documentation
+# Youtube Downloader GUI Documentation
 
 ## Quick Start
 
