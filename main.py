@@ -76,8 +76,14 @@ def Get_Data_Details_Playlists(url):
     ydl = youtube_dl.YoutubeDL(ydl_opts)
     with ydl:
         data = ydl.extract_info(url, download=False)
+    
 
     arr_data = []
+
+    if len(data["entries"])==0:
+        eel.isErrorDownload(f"This link doesn't exist video - '{url}'")
+        
+
 
     for data in data["entries"]:
         youtube_obj = youtube.youtube(url=data["webpage_url"], data=data)
