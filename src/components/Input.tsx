@@ -91,7 +91,7 @@ const Input = () => {
     const isValidListParam = (listParam: string): boolean => {
         return true;
     }
- 
+
     const All_Download_Video = (Quality: string) => {
         AllDetail.map(async (data: any) => {
             const { Video_url, ext } = data.videoquality[Quality]
@@ -107,7 +107,9 @@ const Input = () => {
             dispatch({type: 'CardLoading', data: true});
 
             await window.eel.Add_Details(url)((message: any) => {
-                if (message !== true) {
+                if (message.error) {
+                    dispatch({type: 'Warning', data: url});
+                } else if (message) {
                     SetAllDetail({ message, type: 'add' });
                 }
                 dispatch({type: 'CardLoading', data: false});
@@ -121,11 +123,12 @@ const Input = () => {
         dispatch({type: 'PlayListLoading', data: true});
 
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
-            data.map((message: any) => {
-                if (message !== true) {
+            data.forEach((message: any) => {
+                if (message.error) {
+                    dispatch({type: 'Warning', data: url});
+                } else if (message) {
                     SetAllDetail({ message, type: 'add' });
                 }
-                return 0;
             })
             dispatch({type: 'PlayListLoading', data: false});
         })
