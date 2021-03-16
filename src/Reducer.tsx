@@ -41,7 +41,7 @@ const stateReducer = (state: any, action: any) => {
       return {...state, PlayListLoading: action.data}
     
     case 'isError':
-      return {...state, PlayListLoading: action.data}
+      return {...state, isError: {...action.data}}
 
     case `AllListOfQuaility`:
       return {...state, AllListOfQuaility: action.data}
