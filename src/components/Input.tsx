@@ -105,11 +105,10 @@ const Input = () => {
     const oneVideo = async (url: string) => {
         if (AllDetail.every((obj: any) => obj.url !== url)) {
             dispatch({type: 'CardLoading', data: true});
-
             await window.eel.Add_Details(url)((message: any) => {
-                if ( message &&  message.error ) {
+                if (!message) {
                     dispatch({type: 'Warning', data: url});
-                } else if (message) {
+                } else {
                     SetAllDetail({ message, type: 'add' });
                 }
                 dispatch({type: 'CardLoading', data: false});
@@ -121,15 +120,16 @@ const Input = () => {
 
     const onePlaylist = async (url: string) => {
         dispatch({type: 'PlayListLoading', data: true});
-
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
-            data.forEach((message: any) => {
-                if (message.error) {
+            if (data.length === 0) {
                     dispatch({type: 'Warning', data: url});
-                } else if (message) {
-                    SetAllDetail({ message, type: 'add' });
-                }
-            })
+            } else {
+                data.forEach((message: any) => {
+                    if (message) {
+                        SetAllDetail({ message, type: 'add' });
+                    }
+                })
+            }
             dispatch({type: 'PlayListLoading', data: false});
         })
     }
