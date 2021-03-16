@@ -77,7 +77,7 @@ const App = () => {
     SetAllDetail({ data, type: 'updateDownloadPercent' })
   }
   function isErrorDownload(text: string) {
-    dispatch({ data: !state.isError, type: 'isError' })
+    dispatch({ data: { isError: true, text: text } , type: 'isError' })
     SetAllDetail({ type: 'empty' });
   }
 
