@@ -7,18 +7,6 @@ import webbrowser
 import youtube_dl
 
 
-def Get_Array_With_Playlist_Data(url_data):
-    if len(url_data['entries']) == 0:
-        arr_data = []
-    else:
-        for video_data in url_data["entries"]:
-            youtube_obj = youtube.youtube(
-                url=video_data["webpage_url"], data=video_data)
-            AllDetails = youtube_obj.Get_Data_Details()
-            arr_data.append(AllDetails)
-    return arr_data
-
-
 @eel.expose
 def Add_Details(url):
     """ This function is where to get all details in youtube in a video 
@@ -88,10 +76,10 @@ def Get_Data_Details_Playlists(url):
         ydl = youtube_dl.YoutubeDL(ydl_opts)
         with ydl:
             data = ydl.extract_info(url, download=False)
-            All_Video_Data = Get_Array_With_Playlist_Data(data)
-            if len(All_Video_Data) == 0:
-                raise Exception('Invalid link')
-            else: 
+            All_Video_Data = youtube.Get_Array_With_Playlist_Data(data)
+            if All_Video_Data == []:
+                raise Exception()
+            else:
                 return All_Video_Data
     except:
         eel.isErrorDownload("This link might be problem and try again")
