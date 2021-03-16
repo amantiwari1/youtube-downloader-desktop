@@ -25,7 +25,7 @@ def Add_Details(url):
         
     except:
         eel.isErrorDownload("This link might be problem and try again")
-
+        return {'error': True}
 
 
 @eel.expose
