@@ -119,14 +119,6 @@ const Main = () => {
                             </Row>
                         }
                     </Col>
-
-                    <Col xs={12}>
-                        {
-                            state.Warning.map(url => (
-                                <p key={url} >{url} is Wrong Link Please fix it</p>
-                            ))
-                        }
-                    </Col>
                 </Row>
             </Col>
 

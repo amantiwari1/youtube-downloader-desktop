@@ -15,16 +15,21 @@ class youtube:
         self.url = url
         self.data = data
         if data is None:
-            try:
-                ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s',})
-                with ydl:
-                    self.data = ydl.extract_info(url, download=False) # get the all details from url and store in self.data
-            except:
-                eel.isErrorDownload('Link problem')
-        
-
+            ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s',})
+            with ydl:
+                # get the all details from url and store in self.data
+                self.data = ydl.extract_info(url, download=False) 
         self.maps = {}
         self.subtitles = {}
+        self.isPlaylist = 'entries' in self.data.keys()
+        self.Raise_Error_If_Is_Invalid_Playlist()
+
+
+    def Raise_Error_If_Is_Invalid_Playlist(self):
+        if self.isPlaylist:
+            if len(self.data['entries']) == 0:
+                raise Exception(
+                    'The playlist don\'t have videos or is wrong')
 
 
     def Get_Data_Details(self):
@@ -86,13 +91,15 @@ class youtube:
             elif format_note in list_of_quality:
                 self.maps[format_note] = data
 
-            
 
-
-
-   
-
-
-
+def Get_Array_With_Playlist_Data(url_data):
+    arr_data = []
+    if len(url_data['entries']) != 0:
+        for video_data in url_data["entries"]:
+            youtube_obj = youtube(
+                url=video_data["webpage_url"], data=video_data)
+            AllDetails = youtube_obj.Get_Data_Details()
+            arr_data.append(AllDetails)
+    return arr_data
 
 

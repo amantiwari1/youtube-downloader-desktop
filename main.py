@@ -17,15 +17,15 @@ def Add_Details(url):
 
     try:
         if function.is_connected():
+            eel.is_not_connected(False)
             YoutubeObject = youtube.youtube(url)
             AllDetails = YoutubeObject.Get_Data_Details()
             return AllDetails
         else:
-            eel.isErrorDownload("Please Check your Internet")
+            eel.is_not_connected(True)
         
     except:
-        eel.isErrorDownload("This link might be problem and try again")
-
+        pass
 
 
 @eel.expose
@@ -73,19 +73,24 @@ def Get_Data_Details_Playlists(url):
     ydl_opts = {
         'outtmpl': '%(id)s.%(ext)s',
     }
-    ydl = youtube_dl.YoutubeDL(ydl_opts)
-    with ydl:
-        data = ydl.extract_info(url, download=False)
+    try:
+        if function.is_connected():
+            eel.is_not_connected(False)
+            ydl = youtube_dl.YoutubeDL(ydl_opts)
+            with ydl:
+                data = ydl.extract_info(url, download=False)
+                All_Video_Data = youtube.Get_Array_With_Playlist_Data(data)
+                if All_Video_Data == []:
+                    raise Exception()
+                else:
+                    return All_Video_Data
+        else:
+            eel.is_not_connected(True)
+            return []
 
-    arr_data = []
-
-    for data in data["entries"]:
-        youtube_obj = youtube.youtube(url=data["webpage_url"], data=data)
-        AllDetails = youtube_obj.Get_Data_Details()
-        arr_data.append(AllDetails)
-
-    return arr_data
-
+    except:
+        return []
+    
 
 @eel.expose
 def All_Quality_Match(data):

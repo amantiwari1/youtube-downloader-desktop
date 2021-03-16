@@ -25,12 +25,6 @@ const DetailsReducer = (state: any, action: any) => {
 
 const stateReducer = (state: any, action: any) => {
   switch(action.type) {
-    case 'Warning':
-      return {...state, Warning: [...state.Warning, action.data]};
-    
-    case 'emptyWarning':
-      return {...state, Warning: []};
-
     case 'setPath':
       return {...state, Path: action.data}
       
@@ -41,7 +35,7 @@ const stateReducer = (state: any, action: any) => {
       return {...state, PlayListLoading: action.data}
     
     case 'isError':
-      return {...state, PlayListLoading: action.data}
+      return {...state, isError: {...action.data}}
 
     case `AllListOfQuaility`:
       return {...state, AllListOfQuaility: action.data}
@@ -70,6 +64,9 @@ const stateReducer = (state: any, action: any) => {
       }      
     case `setTheme`:
       return {...state, theme: action.data}
+
+    case `is_not_connected`:
+      return {...state, is_not_connected: action.data}
   }
 
 }

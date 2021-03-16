@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext , useEffect} from 'react'
 import { ThemeContext } from "../App";
 import styled from 'styled-components';
 import { Col, Row } from "react-bootstrap";
@@ -82,7 +82,22 @@ const Rowu = styled(Row)`
 const Input = () => {
 
     const {  AllDetail, SetAllDetail, state, dispatch } = useContext(ThemeContext)
- 
+
+    useEffect(() => {
+        if (state.is_not_connected) {
+            dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
+        }
+       
+    }, [state.is_not_connected, dispatch])
+    const isValidVideoParam = (vParam: string): boolean => {
+        let videoParamLength = 11;
+        return vParam.length === videoParamLength;
+    } 
+
+    const isValidListParam = (listParam: string): boolean => {
+        return true;
+    }
+
     const All_Download_Video = (Quality: string) => {
         AllDetail.map(async (data: any) => {
             const { Video_url, ext } = data.videoquality[Quality]
@@ -96,9 +111,15 @@ const Input = () => {
     const oneVideo = async (url: string) => {
         if (AllDetail.every((obj: any) => obj.url !== url)) {
             dispatch({type: 'CardLoading', data: true});
-
             await window.eel.Add_Details(url)((message: any) => {
-                if (message !== true) {
+                if (!message) {
+                    if (state.is_not_connected) {
+                        dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
+                    } else {
+                        dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
+                    }
+                }                   
+                else {
                     SetAllDetail({ message, type: 'add' });
                 }
                 dispatch({type: 'CardLoading', data: false});
@@ -110,33 +131,33 @@ const Input = () => {
 
     const onePlaylist = async (url: string) => {
         dispatch({type: 'PlayListLoading', data: true});
-
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
-            data.map((message: any) => {
-                if (message !== true) {
-                    SetAllDetail({ message, type: 'add' });
+            if (data.length === 0) {
+                if (state.is_not_connected) {
+                    dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
+                } else {
+                    dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                 }
-                return 0;
-            })
+            } else {
+                data.forEach((message: any) => {
+                    if (message) {
+                        SetAllDetail({ message, type: 'add' });
+                    }
+                })
+            }
             dispatch({type: 'PlayListLoading', data: false});
         })
     }
 
 
     const Get_Detail = async (textarea: String) => {
-        dispatch({ data: false, type: 'isError' })
-
-        let oneVideoUrl = (
-            /^https:\/\/www\.youtube\.com\/watch\?v=\S{11}\s*$/
-        )
-        let playlistUrl = (
-            /^https:\/\/www\.youtube\.com\/playlist\?list=\S{34}\s*$/
-        )
-        let playlistUrlWithTheFirstVideoSpecified = (
-            /^https:\/\/www\.youtube\.com\/watch\?v=\S{11}&list=\S{34}\s*$/
-        )
+        let url;
+        let isOneVideoUrl;
+        let isPlaylistUrl;
+        let urlParams;
+        let isValidLinkPattern = /^https:\/\/www\.youtube\.com\/(watch|playlist)\?/;
+        dispatch({ data: false, type: 'isError' });
         SetAllDetail({ type: 'empty' });
-        dispatch({type: 'emptyWarning'});
 
         if (textarea === "") {
             return 0;
@@ -145,12 +166,17 @@ const Input = () => {
         const AllUrl = textarea.split('\n');
 
 
-        for await (let url of AllUrl) {
-            let isOneVideoUrl = oneVideoUrl.test(url);
-            let isPlaylistUrl = (
-                playlistUrl.test(url) ||
-                playlistUrlWithTheFirstVideoSpecified.test(url)
-            );
+        for await (url of AllUrl) {
+            isOneVideoUrl = false;
+            isPlaylistUrl = false;
+            if (isValidLinkPattern.test(url)) {
+                urlParams = (new URL(url)).searchParams;
+                if (urlParams.has('list')) {
+                    isPlaylistUrl = isValidListParam(urlParams.get('list'));
+                } else if (urlParams.has('v')) {
+                    isOneVideoUrl = isValidVideoParam(urlParams.get('v'));
+                }
+            }
 
             if (url !== "") {
                 // one video url  
@@ -163,7 +189,7 @@ const Input = () => {
                 }
                 // Url is wrong
                 else {
-                    dispatch({type: 'Warning', data: url});
+                    dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                 }
             }
         }

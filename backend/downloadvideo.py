@@ -39,7 +39,7 @@ def Download_Video(data):
         os.remove(audiopath)
         os.remove(videopath)
     except:
-        eel.isErrorDownload('cant remove video and audio')
+        pass
     
     
 
