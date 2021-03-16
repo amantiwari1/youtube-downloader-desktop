@@ -45,7 +45,6 @@ const App = () => {
   //  this is useState
 
   const initialState = {
-    Warning: [],
     Path: "",
     PlayListLoading: false,
     CardLoading: false,
@@ -53,7 +52,8 @@ const App = () => {
     ChangeQuality: { totalfilesize: {}, quality: "" }, 
     isError: { isError: false, text: "" },
     showModal: false,
-    theme: 'light'
+    theme: 'light', 
+    is_not_connected: false
   } 
 
   const [state, dispatch] = useReducer(stateReducer, initialState)
@@ -76,15 +76,17 @@ const App = () => {
   function Set_Download_Percent(data: any) {
     SetAllDetail({ data, type: 'updateDownloadPercent' })
   }
-  function isErrorDownload(text: string) {
-    dispatch({ data: { isError: true, text: text } , type: 'isError' })
-    SetAllDetail({ type: 'empty' });
+
+
+  function is_not_connected(bool: boolean) {
+    dispatch({ data: bool , type: 'is_not_connected' })
+    
   }
 
   // this Set_Download_Percent will be sent in python and 
   // python could run it 
   window.eel.expose(Set_Download_Percent, 'Set_Download_Percent')
-  window.eel.expose(isErrorDownload, 'isErrorDownload')
+  window.eel.expose(is_not_connected, 'is_not_connected')
 
 
   return (
