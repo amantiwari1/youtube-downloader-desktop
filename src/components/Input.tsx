@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext , useEffect} from 'react'
 import { ThemeContext } from "../App";
 import styled from 'styled-components';
 import { Col, Row } from "react-bootstrap";
@@ -83,6 +83,12 @@ const Input = () => {
 
     const {  AllDetail, SetAllDetail, state, dispatch } = useContext(ThemeContext)
 
+    useEffect(() => {
+        if (state.is_not_connected) {
+            dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
+        }
+       
+    }, [state.is_not_connected, dispatch])
     const isValidVideoParam = (vParam: string): boolean => {
         let videoParamLength = 11;
         return vParam.length === videoParamLength;
@@ -107,8 +113,13 @@ const Input = () => {
             dispatch({type: 'CardLoading', data: true});
             await window.eel.Add_Details(url)((message: any) => {
                 if (!message) {
-                    dispatch({type: 'Warning', data: url});
-                } else {
+                    if (state.is_not_connected) {
+                        dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
+                    } else {
+                        dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
+                    }
+                }                   
+                else {
                     SetAllDetail({ message, type: 'add' });
                 }
                 dispatch({type: 'CardLoading', data: false});
@@ -122,7 +133,11 @@ const Input = () => {
         dispatch({type: 'PlayListLoading', data: true});
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
             if (data.length === 0) {
-                    dispatch({type: 'Warning', data: url});
+                if (state.is_not_connected) {
+                    dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
+                } else {
+                    dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
+                }
             } else {
                 data.forEach((message: any) => {
                     if (message) {
@@ -143,7 +158,6 @@ const Input = () => {
         let isValidLinkPattern = /^https:\/\/www\.youtube\.com\/(watch|playlist)\?/;
         dispatch({ data: false, type: 'isError' });
         SetAllDetail({ type: 'empty' });
-        dispatch({type: 'emptyWarning'});
 
         if (textarea === "") {
             return 0;
@@ -175,7 +189,7 @@ const Input = () => {
                 }
                 // Url is wrong
                 else {
-                    dispatch({type: 'Warning', data: url});
+                    dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                 }
             }
         }
