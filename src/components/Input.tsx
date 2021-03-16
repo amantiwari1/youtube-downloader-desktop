@@ -107,7 +107,7 @@ const Input = () => {
             dispatch({type: 'CardLoading', data: true});
 
             await window.eel.Add_Details(url)((message: any) => {
-                if (message.error) {
+                if ( message &&  message.error ) {
                     dispatch({type: 'Warning', data: url});
                 } else if (message) {
                     SetAllDetail({ message, type: 'add' });
