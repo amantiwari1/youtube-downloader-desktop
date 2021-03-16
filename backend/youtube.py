@@ -92,3 +92,14 @@ class youtube:
                 self.maps[format_note] = data
 
 
+def Get_Array_With_Playlist_Data(url_data):
+    arr_data = []
+    if len(url_data['entries']) != 0:
+        for video_data in url_data["entries"]:
+            youtube_obj = youtube(
+                url=video_data["webpage_url"], data=video_data)
+            AllDetails = youtube_obj.Get_Data_Details()
+            arr_data.append(AllDetails)
+    return arr_data
+
+
