@@ -17,14 +17,15 @@ def Add_Details(url):
 
     try:
         if function.is_connected():
+            eel.is_not_connected(False)
             YoutubeObject = youtube.youtube(url)
             AllDetails = YoutubeObject.Get_Data_Details()
             return AllDetails
         else:
-            eel.isErrorDownload("Please Check your Internet")
+            eel.is_not_connected(True)
         
     except:
-        eel.isErrorDownload("This link might be problem and try again")
+        pass
 
 
 @eel.expose
@@ -73,16 +74,21 @@ def Get_Data_Details_Playlists(url):
         'outtmpl': '%(id)s.%(ext)s',
     }
     try:
-        ydl = youtube_dl.YoutubeDL(ydl_opts)
-        with ydl:
-            data = ydl.extract_info(url, download=False)
-            All_Video_Data = youtube.Get_Array_With_Playlist_Data(data)
-            if All_Video_Data == []:
-                raise Exception()
-            else:
-                return All_Video_Data
+        if function.is_connected():
+            eel.is_not_connected(False)
+            ydl = youtube_dl.YoutubeDL(ydl_opts)
+            with ydl:
+                data = ydl.extract_info(url, download=False)
+                All_Video_Data = youtube.Get_Array_With_Playlist_Data(data)
+                if All_Video_Data == []:
+                    raise Exception()
+                else:
+                    return All_Video_Data
+        else:
+            eel.is_not_connected(True)
+            return []
+
     except:
-        eel.isErrorDownload("This link might be problem and try again")
         return []
     
 
