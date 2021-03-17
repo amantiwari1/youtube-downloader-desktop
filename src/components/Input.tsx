@@ -194,17 +194,21 @@ const Input = () => {
                 <TextArea
                     placeholder="Enter multiple url youtube video"
                     rows={3}
-                    onChange={(e) => {dispatch({type: 'setUrl', data: e.target.value})}}
                 />
             </Colu>
             <Colu xs={3}>
                 <Add
                     type="button"
-                    onClick={() => Get_Detail(state.Url)}
+                    onClick={() => {
+                        let textarea = document.querySelector('textarea')
+                        if (textarea) {
+                            Get_Detail(textarea.value)
+                            textarea.value = ''
+                        }
+                    }}
                 >
                     Add
                 </Add>
-
             </Colu>
         </Rowu>
     )
