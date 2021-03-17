@@ -67,11 +67,7 @@ const stateReducer = (state: any, action: any) => {
 
     case `is_not_connected`:
       return {...state, is_not_connected: action.data}
-
-    case `setUrl`:
-      return {...state, Url: action.data}
   }
-
 }
 
 export { DetailsReducer, stateReducer }
