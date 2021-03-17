@@ -45,6 +45,20 @@ const TextArea = styled.textarea`
 `
 
 const Add = styled.button`
+    width: 100%; 
+    width: 100%;
+    height: 60px;
+    border-radius: 40px;
+    color: #ffffff;
+    background-color: #000;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 40%);
+    transition: 0.3s;
+    &:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+    }
+    border: none;
+    margin-left: 7px;
+
 `
 
 const Colu = styled(Col)`
