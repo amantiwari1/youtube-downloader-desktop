@@ -44,6 +44,23 @@ const TextArea = styled.textarea`
 
 `
 
+const Add = styled.button`
+    width: 100%; 
+    width: 100%;
+    height: 60px;
+    border-radius: 40px;
+    color: #ffffff;
+    background-color: #000;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 40%);
+    transition: 0.3s;
+    &:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+    }
+    border: none;
+    margin-left: 7px;
+
+`
+
 const Colu = styled(Col)`
 
     padding:1px;
@@ -51,29 +68,7 @@ const Colu = styled(Col)`
 
 `
 
-const DownloadAll = styled.button`
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
-    transition: 0.3s;
-    &:hover {
-        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
-    }
-    width: 100%;       
-    padding: 13px 32px;
-    border: none;
-    background: #141414;
-    color: #fff; 
-    font-size: 24px;
-    cursor: pointer;  
-    margin: 2px;
-    border-radius: 20px;
 
-    &:disabled,
-    &[disabled] {
-        opacity: 0.3;
-        cursor: default;  
-
-    }
-`
 
 const Rowu = styled(Row)`
     margin: 0;
@@ -89,6 +84,10 @@ const Input = () => {
         }
        
     }, [state.is_not_connected, dispatch])
+
+    // useEffect(() => {
+    //     setUrl(Url)
+    // })
     const isValidVideoParam = (vParam: string): boolean => {
         let videoParamLength = 11;
         return vParam.length === videoParamLength;
@@ -98,15 +97,7 @@ const Input = () => {
         return true;
     }
 
-    const All_Download_Video = (Quality: string) => {
-        AllDetail.map(async (data: any) => {
-            const { Video_url, ext } = data.videoquality[Quality]
-            await window.eel.Download_video({ title: data.title, urlvideo: Video_url, url: data.url, path: state.Path, audiourl: data.videoquality['m4a'].Video_url, ext: ext })
-                (() => {
-                })
-            return 0;
-        })
-    }
+   
 
     const oneVideo = async (url: string) => {
         if (AllDetail.every((obj: any) => obj.url !== url)) {
@@ -203,17 +194,17 @@ const Input = () => {
                 <TextArea
                     placeholder="Enter multiple url youtube video"
                     rows={3}
-                    onChange={(e) => Get_Detail(e.target.value)}
+                    onChange={(e) => {dispatch({type: 'setUrl', data: e.target.value})}}
                 />
             </Colu>
             <Colu xs={3}>
-                <DownloadAll
-                    disabled={AllDetail.length === 0} 
+                <Add
                     type="button"
-                    onClick={() => All_Download_Video(state.ChangeQuality.quality)}
+                    onClick={() => Get_Detail(state.Url)}
                 >
-                    Download
-                    </DownloadAll>
+                    Add
+                </Add>
+
             </Colu>
         </Rowu>
     )

@@ -3,9 +3,31 @@ import { Card } from './Card';
 import { Input } from "./Input"
 import { ThemeContext } from "../App";
 import { Col, Row } from "react-bootstrap";
+import styled from 'styled-components';
 
- 
 
+const DownloadAll = styled.button`
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4);
+    transition: 0.3s;
+    &:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+    }
+    width: 100%;       
+    border: none;
+    background: #141414;
+    color: #fff; 
+    font-size: 16px;
+    cursor: pointer;  
+    margin: 2px;
+    border-radius: 20px;
+
+    &:disabled,
+    &[disabled] {
+        opacity: 0.3;
+        cursor: default;  
+
+    }
+`
 
 
 const Main = () => {
@@ -20,7 +42,7 @@ const Main = () => {
 
     React.useEffect(() => {
         window.eel.Get_Path_Folder()((getpath: string) => {
-            dispatch({type: 'setPath', data: getpath})
+            dispatch({ type: 'setPath', data: getpath })
         })
     }, [dispatch])
 
@@ -29,7 +51,7 @@ const Main = () => {
     React.useEffect(() => {
         type Dict = { [key: string]: any };
         const totalfilesize: Dict = {}
-        var All_Data_Quality: Array<Array<string>> = [] 
+        var All_Data_Quality: Array<Array<string>> = []
         AllDetail.map((data: any) => {
             All_Data_Quality.push(Object.keys(data.videoquality))
             return 0;
@@ -47,8 +69,8 @@ const Main = () => {
                 return 0;
             })
 
-            dispatch({type:'AllListOfQuaility', data: data})
-            dispatch({type:'ChangeQuality', data: { quality: data[0], totalfilesize: totalfilesize }})
+            dispatch({ type: 'AllListOfQuaility', data: data })
+            dispatch({ type: 'ChangeQuality', data: { quality: data[0], totalfilesize: totalfilesize } })
 
         })
     }, [AllDetail, dispatch])
@@ -60,10 +82,17 @@ const Main = () => {
 
 
     const HandnleQuality = (quality: any) => {
+        dispatch({ type: 'UpdateQuality', data: quality })
+    }
 
-        dispatch({type:'UpdateQuality', data: quality})
-
-
+    const All_Download_Video = (Quality: string) => {
+        AllDetail.map(async (data: any) => {
+            const { Video_url, ext } = data.videoquality[Quality]
+            await window.eel.Download_video({ title: data.title, urlvideo: Video_url, url: data.url, path: state.Path, audiourl: data.videoquality['m4a'].Video_url, ext: ext })
+                (() => {
+                })
+            return 0;
+        })
     }
     return (
         <Row>
@@ -78,7 +107,7 @@ const Main = () => {
                         {
                             state.isError.isError && <p>{state.isError.text}</p>
                         }
-                    </Col> 
+                    </Col>
 
                     <Col xs={12}>
                         {
@@ -95,7 +124,7 @@ const Main = () => {
                                     <label>Overall FileSize : </label>
                                 </Col>
 
-                                <Col xs={3}>
+                                <Col xs={2}>
 
                                     <p>{formatBytes(state.ChangeQuality.totalfilesize[state.ChangeQuality.quality])}</p>
                                 </Col>
@@ -105,7 +134,7 @@ const Main = () => {
                                     <label>Overall Quality : </label>
                                 </Col>
 
-                                <Col xs={3}>
+                                <Col xs={2}>
 
                                     <select value={state.ChangeQuality.quality} onChange={e => HandnleQuality(e.target.value)}>
                                         {
@@ -115,7 +144,16 @@ const Main = () => {
                                         }
                                     </select>
                                 </Col>
- 
+                                <Col xs={2}>
+                                    <DownloadAll
+                                        disabled={AllDetail.length === 0}
+                                        type="button"
+                                        onClick={() => All_Download_Video(state.ChangeQuality.quality)}>
+                                        Download
+                                        </DownloadAll>
+
+                                </Col>
+
                             </Row>
                         }
                     </Col>
@@ -128,7 +166,7 @@ const Main = () => {
                         AllDetail.map((data: any) => (
                             <Card key={data.title} handleRemoveItem={SetAllDetail} path={state.Path} data={data} />
                         ))
-                    } 
+                    }
                     {
                         state.CardLoading && <h1>*******Loading******</h1>
                     }
