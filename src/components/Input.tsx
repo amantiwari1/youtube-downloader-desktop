@@ -76,13 +76,12 @@ const Rowu = styled(Row)`
  
 const Input = () => {
 
-    const {  AllDetail, SetAllDetail, state, dispatch } = useContext(ThemeContext)
+    const { SetAllDetail, state, dispatch } = useContext(ThemeContext)
 
     useEffect(() => {
         if (state.is_not_connected) {
             dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
         }
-       
     }, [state.is_not_connected, dispatch])
 
     // useEffect(() => {
@@ -100,13 +99,14 @@ const Input = () => {
    
 
     const oneVideo = async (url: string) => {
-        if (AllDetail.every((obj: any) => obj.url !== url)) {
             dispatch({type: 'CardLoading', data: true});
             await window.eel.Add_Details(url)((message: any) => {
                 if (!message) {
                     if (state.is_not_connected) {
+                        dispatch({type: 'removeUrlExist', data: url })
                         dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
                     } else {
+                        dispatch({type: 'removeUrlExist', data: url })            
                         dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                     }
                 }                   
@@ -116,7 +116,6 @@ const Input = () => {
                 dispatch({type: 'CardLoading', data: false});
 
             })
-        }
     }
 
 
@@ -125,14 +124,21 @@ const Input = () => {
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
             if (data.length === 0) {
                 if (state.is_not_connected) {
+                    dispatch({type: 'removeUrlExist', data: url })
                     dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
                 } else {
+                    dispatch({type: 'removeUrlExist', data: url })
                     dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                 }
             } else {
                 data.forEach((message: any) => {
                     if (message) {
-                        SetAllDetail({ message, type: 'add' });
+                        if (state.UrlExist.includes(message.url)) {
+                            dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
+                        } else {
+                            dispatch({ data: message.url, type: 'addUrlExist' });
+                            SetAllDetail({ message, type: 'add' });
+                        }
                     }
                 })
             }
@@ -148,7 +154,6 @@ const Input = () => {
         let urlParams;
         let isValidLinkPattern = /^https:\/\/www\.youtube\.com\/(watch|playlist)\?/;
         dispatch({ data: false, type: 'isError' });
-        SetAllDetail({ type: 'empty' });
 
         if (textarea === "") {
             return 0;
@@ -158,10 +163,12 @@ const Input = () => {
 
 
         for await (url of AllUrl) {
+
+            let removeSpaceUrl  = url.split(" ").join("");
             isOneVideoUrl = false;
             isPlaylistUrl = false;
-            if (isValidLinkPattern.test(url)) {
-                urlParams = (new URL(url)).searchParams;
+            if (isValidLinkPattern.test(removeSpaceUrl)) {
+                urlParams = (new URL(removeSpaceUrl)).searchParams;
                 if (urlParams.has('list')) {
                     isPlaylistUrl = isValidListParam(urlParams.get('list'));
                 } else if (urlParams.has('v')) {
@@ -169,14 +176,24 @@ const Input = () => {
                 }
             }
 
-            if (url !== "") {
+            if (removeSpaceUrl !== "") {
                 // one video url  
                 if (isOneVideoUrl) {
-                    oneVideo(url);
+                    if (state.UrlExist.includes(removeSpaceUrl)) {
+                        dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
+                    } else {
+                        dispatch({ data: removeSpaceUrl, type: 'addUrlExist' });
+                        oneVideo(removeSpaceUrl);
+                    }
                 }
                 // playlist url
                 else if (isPlaylistUrl) {
-                    onePlaylist(url);
+                    if (state.UrlExist.includes(removeSpaceUrl)) {
+                        dispatch({type: 'isError', data: {isError: true, text: 'Warning: this playlist url has been added'}});
+                    } else {
+                        dispatch({ data: removeSpaceUrl, type: 'addUrlExist' });
+                        onePlaylist(removeSpaceUrl);
+                    }
                 }
                 // Url is wrong
                 else {
@@ -184,7 +201,7 @@ const Input = () => {
                 }
             }
         }
-        return false;
+        return 0;
     }
 
 
@@ -194,17 +211,24 @@ const Input = () => {
                 <TextArea
                     placeholder="Enter multiple url youtube video"
                     rows={3}
-                    onChange={(e) => {dispatch({type: 'setUrl', data: e.target.value})}}
+                    onChange={() => {
+                        dispatch({type: 'isError', data: {isError: false, text: ''}});
+                    }}
                 />
             </Colu>
             <Colu xs={3}>
                 <Add
                     type="button"
-                    onClick={() => Get_Detail(state.Url)}
+                    onClick={() => {
+                        let textarea = document.querySelector('textarea')
+                        if (textarea) {
+                            Get_Detail(textarea.value)
+                            textarea.value = ''
+                        }
+                    }}
                 >
                     Add
                 </Add>
-
             </Colu>
         </Rowu>
     )

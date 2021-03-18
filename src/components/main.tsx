@@ -164,7 +164,7 @@ const Main = () => {
                 <>
                     {
                         AllDetail.map((data: any) => (
-                            <Card key={data.title} handleRemoveItem={SetAllDetail} path={state.Path} data={data} />
+                            <Card key={data.title} UrlExist={state.UrlExist} handleRemoveItem={SetAllDetail} path={state.Path} data={data} />
                         ))
                     }
                     {

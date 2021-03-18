@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components';
 import { Col, Row } from "react-bootstrap";
 import { BsDownload } from 'react-icons/bs'
 import { AiFillCloseCircle, AiOutlineLink } from 'react-icons/ai'
+import { ThemeContext } from "../App";
+
 
 const Colu = styled(Col)`
     margin:0;
@@ -100,6 +102,7 @@ interface CardInterface {
     },
     handleRemoveItem: any
     path: string
+    UrlExist: any
 }
 
 
@@ -108,11 +111,13 @@ function formatBytes(a: any, b = 0) { if (0 === a) return "0 Bytes"; const c = 0
 
 
 
-const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
+const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
 
 
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "", ext: "" })
     const [isDownloading, setisDownloading] = useState(false)
+
+    const { dispatch } = useContext(ThemeContext)
 
     const ChangeQualityHandle = (Quality: string) => {
         const { format_note, Video_url, filesize, ext } = data.videoquality[Quality]
@@ -173,7 +178,12 @@ const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
                                 </Colu>
 
                                 <Colu xs={1}>
-                                    <Close onClick={() => handleRemoveItem({ name: data.title, type: 'remove' })}>Remove</Close>
+                                    <Close onClick={() => {
+                                         handleRemoveItem({ name: data.title, type: 'remove' });
+
+                                         dispatch({type: 'removeUrlExist', data: data.url })
+                                         
+                                         }}>Remove</Close>
                                 </Colu>
 
                                 <Colu xs={1}>
