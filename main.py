@@ -5,22 +5,64 @@ from backend import youtube, downloadvideo, folder, function
 import PySimpleGUI as sg
 import webbrowser
 import youtube_dl
+from backend.database import session
+from backend.models.video import User
+import ast
 
+@eel.expose
+def Get_All_Details():
+    user = session.query(User)
+
+    arr = []
+    UrlExist = []
+
+    for video in user:
+        arr.append(
+            {
+                "id": video.id,
+                "url": video.url,
+                "title": video.title,
+                "thumbnail": video.thumbnail,
+                "downloadPercent": "",
+                "videoquality": ast.literal_eval(video.videoquality)
+            }
+        )
+        UrlExist.append(video.url)
+
+    return {"data":arr, "UrlExist": UrlExist}
+
+
+@eel.expose
+def DeleteVideo(id):
+    deletevideo = session.query(User).filter(User.id==id).first()
+    session.delete(deletevideo)
+    session.commit()
 
 @eel.expose
 def Add_Details(url):
     """ This function is where to get all details in youtube in a video 
     through url and return all details in youtube to javascript
     """
-    if not function.Check_Url(url):
-            return ["Wrong link", ""]
-
     try:
         if function.is_connected():
             eel.is_not_connected(False)
             YoutubeObject = youtube.youtube(url)
             AllDetails = YoutubeObject.Get_Data_Details()
-            return AllDetails
+
+            new_user = User(
+                url=AllDetails['url'],
+                title=AllDetails['title'],
+                thumbnail=AllDetails['thumbnail'],
+                downloadPercent='',
+                videoquality=f'{AllDetails["videoquality"]}',
+            )
+
+            session.add(new_user)
+            session.commit()
+
+            eel.set_AllDetails(Get_All_Details())
+
+            return 0
         else:
             eel.is_not_connected(True)
         
