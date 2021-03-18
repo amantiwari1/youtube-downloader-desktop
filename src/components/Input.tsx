@@ -76,13 +76,12 @@ const Rowu = styled(Row)`
  
 const Input = () => {
 
-    const {  AllDetail, SetAllDetail, state, dispatch } = useContext(ThemeContext)
+    const { SetAllDetail, state, dispatch } = useContext(ThemeContext)
 
     useEffect(() => {
         if (state.is_not_connected) {
             dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
         }
-       
     }, [state.is_not_connected, dispatch])
 
     // useEffect(() => {
@@ -104,8 +103,10 @@ const Input = () => {
             await window.eel.Add_Details(url)((message: any) => {
                 if (!message) {
                     if (state.is_not_connected) {
+                        dispatch({type: 'removeUrlExist', data: url })
                         dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
                     } else {
+                        dispatch({type: 'removeUrlExist', data: url })            
                         dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                     }
                 }                   
@@ -123,14 +124,21 @@ const Input = () => {
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
             if (data.length === 0) {
                 if (state.is_not_connected) {
+                    dispatch({type: 'removeUrlExist', data: url })
                     dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
                 } else {
+                    dispatch({type: 'removeUrlExist', data: url })
                     dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                 }
             } else {
                 data.forEach((message: any) => {
                     if (message) {
-                        SetAllDetail({ message, type: 'add' });
+                        if (state.UrlExist.includes(message.url)) {
+                            dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
+                        } else {
+                            dispatch({ data: message.url, type: 'addUrlExist' });
+                            SetAllDetail({ message, type: 'add' });
+                        }
                     }
                 })
             }
@@ -172,15 +180,20 @@ const Input = () => {
                 // one video url  
                 if (isOneVideoUrl) {
                     if (state.UrlExist.includes(removeSpaceUrl)) {
-                        dispatch({type: 'isError', data: {isError: true, text: 'Warning: Your two Url is same'}});
+                        dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
                     } else {
-                        state.UrlExist.push(removeSpaceUrl)
+                        dispatch({ data: removeSpaceUrl, type: 'addUrlExist' });
                         oneVideo(removeSpaceUrl);
                     }
                 }
                 // playlist url
                 else if (isPlaylistUrl) {
-                    onePlaylist(removeSpaceUrl);
+                    if (state.UrlExist.includes(removeSpaceUrl)) {
+                        dispatch({type: 'isError', data: {isError: true, text: 'Warning: this playlist url has been added'}});
+                    } else {
+                        dispatch({ data: removeSpaceUrl, type: 'addUrlExist' });
+                        onePlaylist(removeSpaceUrl);
+                    }
                 }
                 // Url is wrong
                 else {
@@ -198,6 +211,9 @@ const Input = () => {
                 <TextArea
                     placeholder="Enter multiple url youtube video"
                     rows={3}
+                    onChange={() => {
+                        dispatch({type: 'isError', data: {isError: false, text: ''}});
+                    }}
                 />
             </Colu>
             <Colu xs={3}>
