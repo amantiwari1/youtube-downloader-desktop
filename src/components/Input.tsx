@@ -103,10 +103,10 @@ const Input = () => {
             await window.eel.Add_Details(url)((message: any) => {
                 if (!message) {
                     if (state.is_not_connected) {
-                        dispatch({type: 'removeUrlExist', data: url })
+                        // dispatch({type: 'removeUrlExist', data: url })
                         dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
                     } else {
-                        dispatch({type: 'removeUrlExist', data: url })            
+                        // dispatch({type: 'removeUrlExist', data: url })            
                         dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                     }
                 }                   
@@ -179,10 +179,12 @@ const Input = () => {
             if (removeSpaceUrl !== "") {
                 // one video url  
                 if (isOneVideoUrl) {
+                    console.log(state.UrlExist);
+                    
                     if (state.UrlExist.includes(removeSpaceUrl)) {
                         dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
                     } else {
-                        dispatch({ data: removeSpaceUrl, type: 'addUrlExist' });
+                        // dispatch({ data: removeSpaceUrl, type: 'addUrlExist' });
                         oneVideo(removeSpaceUrl);
                     }
                 }
