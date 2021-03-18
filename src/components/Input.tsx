@@ -100,7 +100,6 @@ const Input = () => {
    
 
     const oneVideo = async (url: string) => {
-        if (AllDetail.every((obj: any) => obj.url !== url)) {
             dispatch({type: 'CardLoading', data: true});
             await window.eel.Add_Details(url)((message: any) => {
                 if (!message) {
@@ -116,7 +115,6 @@ const Input = () => {
                 dispatch({type: 'CardLoading', data: false});
 
             })
-        }
     }
 
 
@@ -148,7 +146,6 @@ const Input = () => {
         let urlParams;
         let isValidLinkPattern = /^https:\/\/www\.youtube\.com\/(watch|playlist)\?/;
         dispatch({ data: false, type: 'isError' });
-        SetAllDetail({ type: 'empty' });
 
         if (textarea === "") {
             return 0;
@@ -158,10 +155,12 @@ const Input = () => {
 
 
         for await (url of AllUrl) {
+
+            let removeSpaceUrl  = url.split(" ").join("");
             isOneVideoUrl = false;
             isPlaylistUrl = false;
-            if (isValidLinkPattern.test(url)) {
-                urlParams = (new URL(url)).searchParams;
+            if (isValidLinkPattern.test(removeSpaceUrl)) {
+                urlParams = (new URL(removeSpaceUrl)).searchParams;
                 if (urlParams.has('list')) {
                     isPlaylistUrl = isValidListParam(urlParams.get('list'));
                 } else if (urlParams.has('v')) {
@@ -169,14 +168,19 @@ const Input = () => {
                 }
             }
 
-            if (url !== "") {
+            if (removeSpaceUrl !== "") {
                 // one video url  
                 if (isOneVideoUrl) {
-                    oneVideo(url);
+                    if (state.UrlExist.includes(removeSpaceUrl)) {
+                        dispatch({type: 'isError', data: {isError: true, text: 'Warning: Your two Url is same'}});
+                    } else {
+                        state.UrlExist.push(removeSpaceUrl)
+                        oneVideo(removeSpaceUrl);
+                    }
                 }
                 // playlist url
                 else if (isPlaylistUrl) {
-                    onePlaylist(url);
+                    onePlaylist(removeSpaceUrl);
                 }
                 // Url is wrong
                 else {
@@ -184,7 +188,7 @@ const Input = () => {
                 }
             }
         }
-        return false;
+        return 0;
     }
 
 
