@@ -20,6 +20,9 @@ const DetailsReducer = (state: any, action: any) => {
       case 'empty':
         return []
 
+      case `entire`:
+        return action.data
+
     }
 }
 
@@ -74,6 +77,9 @@ const stateReducer = (state: any, action: any) => {
     case `removeUrlExist`:
       let UpdatedUrlExist = state.UrlExist.filter(arr => arr !== action.data)
       return {...state, UrlExist:  UpdatedUrlExist }
+    
+    case `entireUrlExist`:
+      return {...state, UrlExist:  action.data}
   
     }
 }
