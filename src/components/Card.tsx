@@ -100,6 +100,7 @@ interface CardInterface {
     },
     handleRemoveItem: any
     path: string
+    UrlExist: any
 }
 
 
@@ -108,7 +109,7 @@ function formatBytes(a: any, b = 0) { if (0 === a) return "0 Bytes"; const c = 0
 
 
 
-const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
+const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
 
 
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "", ext: "" })
@@ -173,7 +174,12 @@ const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
                                 </Colu>
 
                                 <Colu xs={1}>
-                                    <Close onClick={() => handleRemoveItem({ name: data.title, type: 'remove' })}>Remove</Close>
+                                    <Close onClick={() => {
+                                         handleRemoveItem({ name: data.title, type: 'remove' });
+
+                                         UrlExist.pop(data.url) 
+                                         
+                                         }}>Remove</Close>
                                 </Colu>
 
                                 <Colu xs={1}>
