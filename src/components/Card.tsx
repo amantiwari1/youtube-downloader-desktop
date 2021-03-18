@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components';
 import { Col, Row } from "react-bootstrap";
 import { BsDownload } from 'react-icons/bs'
 import { AiFillCloseCircle, AiOutlineLink } from 'react-icons/ai'
+import { ThemeContext } from "../App";
+
 
 const Colu = styled(Col)`
     margin:0;
@@ -115,6 +117,8 @@ const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "", ext: "" })
     const [isDownloading, setisDownloading] = useState(false)
 
+    const { dispatch } = useContext(ThemeContext)
+
     const ChangeQualityHandle = (Quality: string) => {
         const { format_note, Video_url, filesize, ext } = data.videoquality[Quality]
         setChangeQuality({ video_url: Video_url, filesize: filesize, quality: format_note, ext: ext })
@@ -177,7 +181,7 @@ const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
                                     <Close onClick={() => {
                                          handleRemoveItem({ name: data.title, type: 'remove' });
 
-                                         UrlExist.pop(data.url) 
+                                         dispatch({type: 'removeUrlExist', data: data.url })
                                          
                                          }}>Remove</Close>
                                 </Colu>
