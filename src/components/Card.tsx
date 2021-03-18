@@ -99,6 +99,8 @@ interface CardInterface {
         url: string,
         downloadPercent: string,
         videoquality: any
+        id: number
+
     },
     handleRemoveItem: any
     path: string
@@ -181,6 +183,7 @@ const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
                                     <Close onClick={() => {
                                          handleRemoveItem({ name: data.title, type: 'remove' });
 
+                                         window.eel.DeleteVideo(data.id)
                                          dispatch({type: 'removeUrlExist', data: data.url })
                                          
                                          }}>Remove</Close>
