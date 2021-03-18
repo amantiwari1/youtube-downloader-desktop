@@ -67,7 +67,15 @@ const stateReducer = (state: any, action: any) => {
 
     case `is_not_connected`:
       return {...state, is_not_connected: action.data}
-  }
+    
+    case `addUrlExist`:
+      return {...state, UrlExist: [...state.UrlExist, action.data]}
+    
+    case `removeUrlExist`:
+      let UpdatedUrlExist = state.UrlExist.filter(arr => arr !== action.data)
+      return {...state, UrlExist:  UpdatedUrlExist }
+  
+    }
 }
 
 export { DetailsReducer, stateReducer }
