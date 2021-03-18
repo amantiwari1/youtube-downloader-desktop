@@ -53,7 +53,8 @@ const App = () => {
     isError: { isError: false, text: "" },
     showModal: false,
     theme: 'light', 
-    is_not_connected: false
+    is_not_connected: false,
+    UrlExist: []
   } 
 
   const [state, dispatch] = useReducer(stateReducer, initialState)
