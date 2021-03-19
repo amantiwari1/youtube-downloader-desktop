@@ -124,10 +124,10 @@ const Input = () => {
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
             if (data.length === 0) {
                 if (state.is_not_connected) {
-                    dispatch({type: 'removeUrlExist', data: url })
+                    // dispatch({type: 'removeUrlExist', data: url })
                     dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
                 } else {
-                    dispatch({type: 'removeUrlExist', data: url })
+                    // dispatch({type: 'removeUrlExist', data: url })
                     dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
                 }
             } else {

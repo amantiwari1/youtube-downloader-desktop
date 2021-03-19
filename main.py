@@ -6,17 +6,19 @@ import PySimpleGUI as sg
 import webbrowser
 import youtube_dl
 from backend.database import session
-from backend.models.video import User
+from backend.models.video import Video
 import ast
+
+
 
 @eel.expose
 def Get_All_Details():
-    user = session.query(User)
+    AllVideoData = session.query(Video)
 
     arr = []
     UrlExist = []
 
-    for video in user:
+    for video in AllVideoData:
         arr.append(
             {
                 "id": video.id,
@@ -34,7 +36,7 @@ def Get_All_Details():
 
 @eel.expose
 def DeleteVideo(id):
-    deletevideo = session.query(User).filter(User.id==id).first()
+    deletevideo = session.query(Video).filter(Video.id==id).first()
     session.delete(deletevideo)
     session.commit()
 
@@ -47,20 +49,10 @@ def Add_Details(url):
         if function.is_connected():
             eel.is_not_connected(False)
             YoutubeObject = youtube.youtube(url)
-            AllDetails = YoutubeObject.Get_Data_Details()
-
-            new_user = User(
-                url=AllDetails['url'],
-                title=AllDetails['title'],
-                thumbnail=AllDetails['thumbnail'],
-                downloadPercent='',
-                videoquality=f'{AllDetails["videoquality"]}',
-            )
-
-            session.add(new_user)
-            session.commit()
-
+            
+            YoutubeObject.Get_Data_Details()
             eel.set_AllDetails(Get_All_Details())
+
 
             return 0
         else:
@@ -122,10 +114,12 @@ def Get_Data_Details_Playlists(url):
             with ydl:
                 data = ydl.extract_info(url, download=False)
                 All_Video_Data = youtube.Get_Array_With_Playlist_Data(data)
+
+                eel.set_AllDetails(Get_All_Details())
                 if All_Video_Data == []:
                     raise Exception()
                 else:
-                    return All_Video_Data
+                    return []
         else:
             eel.is_not_connected(True)
             return []

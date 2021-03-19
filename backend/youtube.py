@@ -3,6 +3,9 @@ import urllib.request
 import os
 from .function import natural_keys
 import json
+from .database import session
+from .models.video import Video
+import ast
 
 """
 youtube_dl is used for get all details of a video
@@ -44,13 +47,17 @@ class youtube:
         thumbnail = self.data['thumbnail']
         self.Get_Detail_Quality_Available()
 
-        return {
-            "url": self.url,
-            "title": title,
-            "thumbnail": thumbnail,
-            "downloadPercent": "",
-            "videoquality": self.maps
-        }
+        newVideoDetails = Video(
+            url=self.url,
+            title=title,
+            thumbnail=thumbnail,
+            downloadPercent='',
+            videoquality=f'{self.maps}',
+        )
+
+        session.add(newVideoDetails)
+        session.commit()
+        
 
     def Get_Detail_Quality_Available(self):
         """get list of video quality
