@@ -117,41 +117,24 @@ const Input = () => {
     const oneVideo = async (url: string) => {
             dispatch({type: 'CardLoading', data: true});
             await window.eel.Add_Details(url)((message: any) => {
-                if (!message) {
-                    if (state.is_not_connected) {
-                        dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
-                    } else {
-                        dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
-                    }
-                }                   
+                handlerBackendMessage(message);
                 dispatch({type: 'CardLoading', data: false});
-
             })
     }
-
 
     const onePlaylist = async (url: string) => {
         dispatch({type: 'PlayListLoading', data: true});
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
             if (data.length === 0) {
-                if (state.is_not_connected) {
-                    dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
-                } else {
-                    dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
-                }
+                catchDetailsError()
             } else {
                 data.forEach((message: any) => {
-                    if (message) {
-                        if (state.UrlExist.includes(message.url)) {
-                            dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
-                        } 
-                    }
+                    handlerBackendMessage(message);
                 })
             }
             dispatch({type: 'PlayListLoading', data: false});
         })
     }
-
 
     const Get_Detail = async (textarea: String) => {
         let url;
