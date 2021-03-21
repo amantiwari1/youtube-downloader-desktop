@@ -42,13 +42,6 @@ def Download_Video(data):
         send_proceess({"text":"This Url already expired please try add again", "url": url })
 
     
-    
-
-    
-def combine_audio(vidname, audname, outname):
-    subprocess.call(f'ffmpeg.exe -y -i "{vidname}" -i "{audname}" -c:v copy -c:a aac "{outname}"', shell=True)
-
-
 def start_download_video(path, filename, urlvideo, url, send_proceess):
 
     fullpath = f"{path}/{filename}"
@@ -69,7 +62,7 @@ def start_download_video(path, filename, urlvideo, url, send_proceess):
 
                 name = ""
 
-                if filename == 'audio':
+                if filename == 'audio.m4a':
                     name= f"Downloding audio... {percent} %"
                 else:
                     name= f"Downloding video... {percent} %"
