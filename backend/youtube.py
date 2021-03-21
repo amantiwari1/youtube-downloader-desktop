@@ -1,11 +1,9 @@
 import youtube_dl
 import urllib.request
 import os
-from .function import natural_keys
 import json
-from .database import session
-from .models.video import Video
-import ast
+from .function import natural_keys
+from .dbmanipulation import Url_In_Database
 
 """
 youtube_dl is used for get all details of a video
@@ -40,18 +38,13 @@ class youtube:
         title = self.data["title"]
         thumbnail = self.data['thumbnail']
         self.Get_Detail_Quality_Available()
-
-        newVideoDetails = Video(
-            url=self.url,
-            title=title,
-            thumbnail=thumbnail,
-            downloadPercent='',
-            videoquality=f'{self.maps}',
-        )
-
-        session.add(newVideoDetails)
-        session.commit()
-        
+        return {
+            'url': self.url,
+            'title': title,
+            'thumbnail': thumbnail,
+            'downloadPercent': '',
+            'videoquality': self.maps,
+        }
 
     def Get_Detail_Quality_Available(self):
         """get list of video quality
@@ -92,9 +85,13 @@ def Get_Array_With_Playlist_Data(url_data):
     if len(url_data['entries']) != 0:
         for video_data in url_data["entries"]:
             url = video_data["webpage_url"]
-            if not (session.query(session.query(Video).filter(Video.url == url).exists()).scalar()):
+            if not Url_In_Database(url):
                 youtube_obj = youtube(
                     url=url, data=video_data)
                 AllDetails = youtube_obj.Get_Data_Details()
                 arr_data.append(AllDetails)
+    else: 
+        raise Exception('The playlist don\'t have videos or is wrong')
     return arr_data
+
+
