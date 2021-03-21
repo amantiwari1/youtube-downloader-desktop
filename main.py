@@ -13,6 +13,11 @@ import ast
 
 @eel.expose
 def Get_All_Details():
+    """
+    This function used to get all video details which user already inserted all url
+    
+    call this function and send all data to javascript and save it in alldetails in js
+    """
     AllVideoData = session.query(Video)
 
     arr = []
@@ -36,6 +41,10 @@ def Get_All_Details():
 
 @eel.expose
 def DeleteVideo(id):
+    """
+    this function is delete a video in sqlite3 through session 
+    it will call this function by user tap remove icon in card Gui
+    """
     deletevideo = session.query(Video).filter(Video.id==id).first()
     session.delete(deletevideo)
     session.commit()

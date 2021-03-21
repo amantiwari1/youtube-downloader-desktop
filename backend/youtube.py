@@ -35,13 +35,7 @@ class youtube:
 
     def Get_Data_Details(self):
         """Get the all detail of a video 
-        In the following :
-        "title": title,
-        "thumbnail": thumbnail,
-        "list_Of_formats": list_Of_formats,
-        "formats": formats,
-        "filesize": filesize,
-        "videourl": videourl
+        and insert all details in  data.sqlite3 throgh session 
         """
         title = self.data["title"]
         thumbnail = self.data['thumbnail']
