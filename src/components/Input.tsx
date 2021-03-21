@@ -76,7 +76,7 @@ const Rowu = styled(Row)`
  
 const Input = () => {
 
-    const {state, dispatch } = useContext(ThemeContext)
+    const {SetAllDetail, state, dispatch} = useContext(ThemeContext)
 
     useEffect(() => {
         if (state.is_not_connected) {
@@ -93,7 +93,26 @@ const Input = () => {
         return true;
     }
 
-   
+    const catchDetailsError = () => {
+        if (state.is_not_connected) {
+            dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
+        } else {
+            dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
+        }
+    }
+
+    const handlerBackendMessage = message => {
+        if (!message) {
+            catchDetailsError();
+        } else {
+            let urlAlreadyExist = state.UrlExist.includes(message.url);
+            if (urlAlreadyExist) {
+                dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
+            } else {
+                SetAllDetail({type: 'add', message});
+            }  
+        }
+    }
 
     const oneVideo = async (url: string) => {
             dispatch({type: 'CardLoading', data: true});
