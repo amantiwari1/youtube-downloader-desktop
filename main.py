@@ -54,9 +54,10 @@ def Add_Details(url):
             eel.set_AllDetails(Get_All_Details())
 
 
-            return 0
+            return True
         else:
             eel.is_not_connected(True)
+            return False
         
     except:
         pass
@@ -119,7 +120,7 @@ def Get_Data_Details_Playlists(url):
                 if All_Video_Data == []:
                     raise Exception()
                 else:
-                    return []
+                    return [True]
         else:
             eel.is_not_connected(True)
             return []
