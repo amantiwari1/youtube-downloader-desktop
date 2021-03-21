@@ -15,7 +15,7 @@ import ast
 def Get_All_Details():
     """
     This function used to get all video details which user already inserted all url
-    
+
     call this function and send all data to javascript and save it in alldetails in js
     """
     AllVideoData = session.query(Video)
@@ -60,6 +60,10 @@ def Add_Details(url):
             YoutubeObject = youtube.youtube(url)
             
             YoutubeObject.Get_Data_Details()
+
+
+            # this functions used to add new video in Gui which is above
+            # already new video by user insert to call js to add new video
             eel.set_AllDetails(Get_All_Details())
 
 
