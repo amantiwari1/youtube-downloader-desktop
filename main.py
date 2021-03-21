@@ -119,16 +119,11 @@ def Get_Data_Details_Playlists(url):
             with ydl:
                 data = ydl.extract_info(url, download=False)
                 All_Video_Data = youtube.Get_Array_With_Playlist_Data(data)
-
-                eel.set_AllDetails(Get_All_Details())
-                if All_Video_Data == []:
-                    raise Exception()
-                else:
-                    return [True]
+                Add_Playlist_In_Db(All_Video_Data)
+                return All_Video_Data
         else:
             eel.is_not_connected(True)
             return []
-
     except:
         return []
     
