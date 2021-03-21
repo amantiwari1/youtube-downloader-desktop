@@ -7,8 +7,8 @@ import webbrowser
 import youtube_dl
 from backend.database import session
 from backend.models.video import Video
+from backend.dbmanipulation import Add_New_Video_In_Db, Add_Playlist_In_Db
 import ast
-
 
 
 @eel.expose
@@ -58,22 +58,13 @@ def Add_Details(url):
         if function.is_connected():
             eel.is_not_connected(False)
             YoutubeObject = youtube.youtube(url)
-            
-            YoutubeObject.Get_Data_Details()
-
-
-            # this functions used to add new video in Gui which is above
-            # already new video by user insert to call js to add new video
-            eel.set_AllDetails(Get_All_Details())
-
-
-            return True
+            videoData = YoutubeObject.Get_Data_Details()
+            Add_New_Video_In_Db(**videoData)
+            return videoData
         else:
             eel.is_not_connected(True)
-            return False
-        
     except:
-        pass
+        return
 
 
 @eel.expose
