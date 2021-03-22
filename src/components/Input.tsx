@@ -108,7 +108,8 @@ const Input = () => {
             let urlAlreadyExist = state.UrlExist.includes(message.url);
             if (urlAlreadyExist) {
                 dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
-            } else {
+            } else {    
+                dispatch({type: 'addUrlExist', data: message.url})
                 SetAllDetail({type: 'add', message});
             }  
         }
