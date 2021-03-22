@@ -87,6 +87,10 @@ const App = () => {
   function Set_Download_Percent(data: any) {
     SetAllDetail({ data, type: 'updateDownloadPercent' })
   }
+  
+  function Set_Savefile(data: any) {
+    SetAllDetail({ data, type: 'updateSavefile' })
+  }
 
 
   function is_not_connected(bool: boolean) {
@@ -102,6 +106,7 @@ const App = () => {
   // this Set_Download_Percent will be sent in python and 
   // python could run it 
   window.eel.expose(Set_Download_Percent, 'Set_Download_Percent')
+  window.eel.expose(Set_Savefile, 'Set_Savefile')
   window.eel.expose(is_not_connected, 'is_not_connected')
   window.eel.expose(set_AllDetails, 'set_AllDetails')
 

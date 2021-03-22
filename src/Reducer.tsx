@@ -17,6 +17,17 @@ const DetailsReducer = (state: any, action: any) => {
 
         return [...updatedList]
 
+      case 'updateSavefile':
+        let updatedArray = state.map((item: any) => {
+          if (item.url === action.data.url) {
+            return { ...item, savefile: action.data.text };
+          }
+          return item;
+        }
+        )
+
+        return [...updatedArray]
+
       case 'empty':
         return []
 
