@@ -4,7 +4,7 @@ from .models.video import Video
 """
 
 
-def Add_New_Video_In_Db(url, title, thumbnail, downloadPercent, videoquality):
+def Add_New_Video_In_Db(url, title, thumbnail, downloadPercent, videoquality, savefile):
     """ This function insert video object in database
     """
     newVideoDetails = Video(
@@ -12,7 +12,8 @@ def Add_New_Video_In_Db(url, title, thumbnail, downloadPercent, videoquality):
         title=title,
         thumbnail=thumbnail,
         downloadPercent=downloadPercent,
-        videoquality=str(videoquality)
+        videoquality=str(videoquality),
+        savefile=savefile,
     )
     session.add(newVideoDetails)
     session.commit()
@@ -25,5 +26,11 @@ def Add_Playlist_In_Db(listOfVideo):
 
 def Url_In_Database(url):
     return (session.query(session.query(Video).filter(Video.url == url).exists()).scalar())
+
+def Update_savefile_In_Db(path, url):
+    data = session.query(Video).filter(Video.url == url).first()
+    data.savefile = path
+    session.merge(data)
+    session.commit()
 
 
