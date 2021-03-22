@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components';
 import { Col, Row } from "react-bootstrap";
-import { BsDownload } from 'react-icons/bs'
+import { BsDownload, BsPlayFill } from 'react-icons/bs'
 import { AiFillCloseCircle, AiOutlineLink } from 'react-icons/ai'
 import { ThemeContext } from "../App";
 
@@ -22,6 +22,13 @@ const Download = styled(BsDownload)`
 
 `
 const Close = styled(AiFillCloseCircle)`
+    cursor: pointer;
+    height: 25px;
+    width: 25px;
+
+
+`
+const Play = styled(BsPlayFill)`
     cursor: pointer;
     height: 25px;
     width: 25px;
@@ -99,7 +106,7 @@ interface CardInterface {
         url: string,
         downloadPercent: string,
         videoquality: any
-        id: number
+        savefile: string
 
     },
     handleRemoveItem: any
@@ -176,17 +183,25 @@ const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
                                 </Colu >
 
                                 <Colu xs={1}>
-                                    <Download aria-disabled={isDownloading}  title='start download' type="button" onClick={starting_download} >Download</Download>
+                                    <Download aria-disabled={isDownloading} title='start download' type="button" onClick={starting_download} />
                                 </Colu>
+                                {
+                                    data.savefile !== "" ? (
+                                        <Colu xs={1}>
+                                            <Play aria-disabled={isDownloading} title='start download' type="button" onClick={() => window.eel.Open_Folder_or_file(data.savefile)} />
+                                        </Colu>
+                                    ) : null
+                                }
+
 
                                 <Colu xs={1}>
                                     <Close onClick={() => {
-                                         handleRemoveItem({ name: data.title, type: 'remove' });
+                                        handleRemoveItem({ name: data.title, type: 'remove' });
 
-                                         window.eel.DeleteVideo(data.url)
-                                         dispatch({type: 'removeUrlExist', data: data.url })
-                                         
-                                         }}>Remove</Close>
+                                        window.eel.DeleteVideo(data.url)
+                                        dispatch({ type: 'removeUrlExist', data: data.url })
+
+                                    }}>Remove</Close>
                                 </Colu>
 
                                 <Colu xs={1}>
