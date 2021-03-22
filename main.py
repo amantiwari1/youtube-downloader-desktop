@@ -31,7 +31,8 @@ def Get_All_Details():
                 "title": video.title,
                 "thumbnail": video.thumbnail,
                 "downloadPercent": "",
-                "videoquality": ast.literal_eval(video.videoquality)
+                "videoquality": ast.literal_eval(video.videoquality),
+                "savefile":video.savefile
             }
         )
         UrlExist.append(video.url)
@@ -57,7 +58,7 @@ def Add_Details(url):
     try:
         if function.is_connected():
             eel.is_not_connected(False)
-            YoutubeObject = youtube.youtube(url)
+            YoutubeObject = youtube.youtube(url)    
             videoData = YoutubeObject.Get_Data_Details()
             Add_New_Video_In_Db(**videoData)
             return videoData
@@ -96,12 +97,12 @@ def Set_Path_Folder(fileaame):
 
 
 @eel.expose
-def Open_Folder(folder):
+def Open_Folder_or_file(path):
     """
     This is folder where download and save file and 
     this function used for open floder 
     """
-    webbrowser.open(os.path.realpath(folder))
+    webbrowser.open(os.path.realpath(path))
 
 
 @eel.expose
