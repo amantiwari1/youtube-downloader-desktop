@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "d:\\project\\youtube-GUI-react\\pip\\Scripts\\python.exe"
+    "python.pythonPath": "pip1\\Scripts\\python.exe",
+    "vim.useSystemClipboard": true
 }
