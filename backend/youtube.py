@@ -44,6 +44,7 @@ class youtube:
             'thumbnail': thumbnail,
             'downloadPercent': '',
             'videoquality': self.maps,
+            "savefile": "",
         }
 
     def Get_Detail_Quality_Available(self):
