@@ -3,6 +3,7 @@ import requests
 from .function import format_filename  
 import os
 import subprocess
+from .dbmanipulation import Update_savefile_In_Db
 
 
 def Download_Video(data):
@@ -28,8 +29,16 @@ def Download_Video(data):
             send_proceess=send_proceess
         )
 
+        fullpath = f'{data["path"]}/{format_filename(data["title"])}.mp4'
         send_proceess({"text":"combining video and audio", "url": url })
-        subprocess.call(f'ffmpeg.exe -y -i "{videopath}" -i "{audiopath}" -c:v copy -c:a aac "{data["path"]}/{format_filename(data["title"])}.mp4"')
+        subprocess.call(f'ffmpeg.exe -y -i "{videopath}" -i "{audiopath}" -c:v copy -c:a aac "{fullpath}"')
+
+        # save fullpath in db
+        Update_savefile_In_Db(path=fullpath, url=url)
+        
+        # send fullpath to js lead to set savefile in Alldetails
+        eel.Set_Savefile({"text": fullpath, "url": url })
+
         send_proceess({"text":"Successfull", "url": url })
 
 
