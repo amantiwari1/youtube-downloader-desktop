@@ -40,12 +40,12 @@ def Get_All_Details():
 
 
 @eel.expose
-def DeleteVideo(id):
+def DeleteVideo(url):
     """
     this function is delete a video in sqlite3 through session 
     it will call this function by user tap remove icon in card Gui
     """
-    deletevideo = session.query(Video).filter(Video.id==id).first()
+    deletevideo = session.query(Video).filter(Video.url==url).first()
     session.delete(deletevideo)
     session.commit()
 

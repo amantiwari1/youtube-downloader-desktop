@@ -183,7 +183,7 @@ const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
                                     <Close onClick={() => {
                                          handleRemoveItem({ name: data.title, type: 'remove' });
 
-                                         window.eel.DeleteVideo(data.id)
+                                         window.eel.DeleteVideo(data.url)
                                          dispatch({type: 'removeUrlExist', data: data.url })
                                          
                                          }}>Remove</Close>
