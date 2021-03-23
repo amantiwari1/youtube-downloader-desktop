@@ -30,7 +30,7 @@ def Download_Video(data):
         )
 
         fullpath = f'{data["path"]}/{format_filename(data["title"])}.mp4'
-        send_proceess({"text":"combining video and audio", "url": url })
+        send_proceess({"text":"combining video and audio", "url": url,  "percent": 100 })
         subprocess.call(f'ffmpeg.exe -y -i "{videopath}" -i "{audiopath}" -c:v copy -c:a aac "{fullpath}"')
 
         # save fullpath in db
@@ -39,7 +39,7 @@ def Download_Video(data):
         # send fullpath to js lead to set savefile in Alldetails
         eel.Set_Savefile({"text": fullpath, "url": url })
 
-        send_proceess({"text":"Successfull", "url": url })
+        send_proceess({"text":"Successfull", "url": url,  "percent": 100 })
 
 
         try: 
@@ -48,7 +48,7 @@ def Download_Video(data):
         except:
             pass
     else:
-        send_proceess({"text":"This Url already expired please try add again", "url": url })
+        send_proceess({"text":"This Url already expired please try add again", "url": url,  "percent": 0 })
 
     
 def start_download_video(path, filename, urlvideo, url, send_proceess):
@@ -72,12 +72,12 @@ def start_download_video(path, filename, urlvideo, url, send_proceess):
                 name = ""
 
                 if filename == 'audio.m4a':
-                    name= f"Downloding audio... {percent} %"
+                    name= "Downloding audio..."
                 else:
-                    name= f"Downloding video... {percent} %"
+                    name= "Downloding video..."
 
-                send_proceess({"text":name, "url": url})
+                send_proceess({"text":name, "url": url, "percent": percent })
                 if percent >= 100:
-                    send_proceess({"text":"Sucess... 100 %", "url": url })
+                    send_proceess({"text":"Sucessfull", "url": url, "percent": percent })
 
     return  fullpath
