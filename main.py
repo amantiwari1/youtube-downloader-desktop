@@ -5,27 +5,67 @@ from backend import youtube, downloadvideo, folder, function
 import PySimpleGUI as sg
 import webbrowser
 import youtube_dl
+from backend.database import session
+from backend.models.video import Video
+from backend.dbmanipulation import Add_New_Video_In_Db, Add_Playlist_In_Db
+import ast
 
+
+@eel.expose
+def Get_All_Details():
+    """
+    This function used to get all video details which user already inserted all url
+
+    call this function and send all data to javascript and save it in alldetails in js
+    """
+    AllVideoData = session.query(Video)
+
+    arr = []
+    UrlExist = []
+
+    for video in AllVideoData:
+        arr.append(
+            {
+                "id": video.id,
+                "url": video.url,
+                "title": video.title,
+                "thumbnail": video.thumbnail,
+                "downloadPercent": "",
+                "videoquality": ast.literal_eval(video.videoquality),
+                "savefile":video.savefile
+            }
+        )
+        UrlExist.append(video.url)
+
+    return {"data":arr, "UrlExist": UrlExist}
+
+
+@eel.expose
+def DeleteVideo(url):
+    """
+    this function is delete a video in sqlite3 through session 
+    it will call this function by user tap remove icon in card Gui
+    """
+    deletevideo = session.query(Video).filter(Video.url==url).first()
+    session.delete(deletevideo)
+    session.commit()
 
 @eel.expose
 def Add_Details(url):
     """ This function is where to get all details in youtube in a video 
     through url and return all details in youtube to javascript
     """
-    if not function.Check_Url(url):
-            return ["Wrong link", ""]
-
     try:
         if function.is_connected():
             eel.is_not_connected(False)
-            YoutubeObject = youtube.youtube(url)
-            AllDetails = YoutubeObject.Get_Data_Details()
-            return AllDetails
+            YoutubeObject = youtube.youtube(url)    
+            videoData = YoutubeObject.Get_Data_Details()
+            Add_New_Video_In_Db(**videoData)
+            return videoData
         else:
             eel.is_not_connected(True)
-        
     except:
-        pass
+        return
 
 
 @eel.expose
@@ -57,12 +97,12 @@ def Set_Path_Folder(fileaame):
 
 
 @eel.expose
-def Open_Folder(folder):
+def Open_Folder_or_file(path):
     """
     This is folder where download and save file and 
     this function used for open floder 
     """
-    webbrowser.open(os.path.realpath(folder))
+    webbrowser.open(os.path.realpath(path))
 
 
 @eel.expose
@@ -80,14 +120,11 @@ def Get_Data_Details_Playlists(url):
             with ydl:
                 data = ydl.extract_info(url, download=False)
                 All_Video_Data = youtube.Get_Array_With_Playlist_Data(data)
-                if All_Video_Data == []:
-                    raise Exception()
-                else:
-                    return All_Video_Data
+                Add_Playlist_In_Db(All_Video_Data)
+                return All_Video_Data
         else:
             eel.is_not_connected(True)
             return []
-
     except:
         return []
     

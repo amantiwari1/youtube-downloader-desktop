@@ -76,7 +76,7 @@ const Rowu = styled(Row)`
  
 const Input = () => {
 
-    const { SetAllDetail, state, dispatch } = useContext(ThemeContext)
+    const {SetAllDetail, state, dispatch} = useContext(ThemeContext)
 
     useEffect(() => {
         if (state.is_not_connected) {
@@ -84,9 +84,6 @@ const Input = () => {
         }
     }, [state.is_not_connected, dispatch])
 
-    // useEffect(() => {
-    //     setUrl(Url)
-    // })
     const isValidVideoParam = (vParam: string): boolean => {
         let videoParamLength = 11;
         return vParam.length === videoParamLength;
@@ -96,56 +93,49 @@ const Input = () => {
         return true;
     }
 
-   
+    const catchDetailsError = () => {
+        if (state.is_not_connected) {
+            dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
+        } else {
+            dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
+        }
+    }
+
+    const handlerBackendMessage = message => {
+        if (!message) {
+            catchDetailsError();
+        } else {
+            let urlAlreadyExist = state.UrlExist.includes(message.url);
+            if (urlAlreadyExist) {
+                dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
+            } else {    
+                dispatch({type: 'addUrlExist', data: message.url})
+                SetAllDetail({type: 'add', message});
+            }  
+        }
+    }
 
     const oneVideo = async (url: string) => {
             dispatch({type: 'CardLoading', data: true});
             await window.eel.Add_Details(url)((message: any) => {
-                if (!message) {
-                    if (state.is_not_connected) {
-                        dispatch({type: 'removeUrlExist', data: url })
-                        dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
-                    } else {
-                        dispatch({type: 'removeUrlExist', data: url })            
-                        dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
-                    }
-                }                   
-                else {
-                    SetAllDetail({ message, type: 'add' });
-                }
+                handlerBackendMessage(message);
                 dispatch({type: 'CardLoading', data: false});
-
             })
     }
-
 
     const onePlaylist = async (url: string) => {
         dispatch({type: 'PlayListLoading', data: true});
         await window.eel.Get_Data_Details_Playlists(url)((data: Array<any>) => {
             if (data.length === 0) {
-                if (state.is_not_connected) {
-                    dispatch({type: 'removeUrlExist', data: url })
-                    dispatch({type: 'isError', data: {isError: true, text: 'Please check your internet and try again'}});
-                } else {
-                    dispatch({type: 'removeUrlExist', data: url })
-                    dispatch({type: 'isError', data: {isError: true, text: 'Please enter a valid YouTube URL'}});
-                }
+                catchDetailsError()
             } else {
                 data.forEach((message: any) => {
-                    if (message) {
-                        if (state.UrlExist.includes(message.url)) {
-                            dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
-                        } else {
-                            dispatch({ data: message.url, type: 'addUrlExist' });
-                            SetAllDetail({ message, type: 'add' });
-                        }
-                    }
+                    handlerBackendMessage(message);
                 })
             }
             dispatch({type: 'PlayListLoading', data: false});
         })
     }
-
 
     const Get_Detail = async (textarea: String) => {
         let url;
@@ -179,10 +169,11 @@ const Input = () => {
             if (removeSpaceUrl !== "") {
                 // one video url  
                 if (isOneVideoUrl) {
+                    console.log(state.UrlExist);
+                    
                     if (state.UrlExist.includes(removeSpaceUrl)) {
                         dispatch({type: 'isError', data: {isError: true, text: 'Warning: this url has been added'}});
                     } else {
-                        dispatch({ data: removeSpaceUrl, type: 'addUrlExist' });
                         oneVideo(removeSpaceUrl);
                     }
                 }

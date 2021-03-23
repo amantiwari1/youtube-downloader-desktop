@@ -70,6 +70,16 @@ const App = () => {
     dispatch({type: 'showModal'})
   };
 
+  useEffect(() => {
+    window.eel.Get_All_Details()((data: any) => {
+
+    SetAllDetail({ data: data.data , type: 'entire' })
+    dispatch({type: 'entireUrlExist', data: data.UrlExist})
+
+
+    })  
+  }, [])
+
 
 
 
@@ -77,17 +87,28 @@ const App = () => {
   function Set_Download_Percent(data: any) {
     SetAllDetail({ data, type: 'updateDownloadPercent' })
   }
+  
+  function Set_Savefile(data: any) {
+    SetAllDetail({ data, type: 'updateSavefile' })
+  }
 
 
   function is_not_connected(bool: boolean) {
     dispatch({ data: bool , type: 'is_not_connected' })
     
   }
+  function set_AllDetails(data: any) {
+    SetAllDetail({ data: data.data , type: 'entire' })
+    dispatch({type: 'entireUrlExist', data: data.UrlExist})
+    
+  }
 
   // this Set_Download_Percent will be sent in python and 
   // python could run it 
   window.eel.expose(Set_Download_Percent, 'Set_Download_Percent')
+  window.eel.expose(Set_Savefile, 'Set_Savefile')
   window.eel.expose(is_not_connected, 'is_not_connected')
+  window.eel.expose(set_AllDetails, 'set_AllDetails')
 
 
   return (

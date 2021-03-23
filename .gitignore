@@ -33,3 +33,4 @@ yarn-error.log*
 *.spec
 
 data.json
+data.sqlite3
