@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
-import { Card } from './Card';
-import { Input } from "./Input"
+import { Card } from './Card/Card';
+import { Input } from "./Input/Input"
 import { ThemeContext } from "../App";
 import { Col, Row } from "react-bootstrap";
-import styled from 'styled-components';
+import styled from 'styled-components'; 
+import formatBytes  from './utils/formatBytes'
 
 
 const DownloadAll = styled.button`
@@ -75,7 +76,6 @@ const Main = () => {
         })
     }, [AllDetail, dispatch])
 
-    function formatBytes(a: any, b = 2) { if (0 === a) return "0 Bytes"; const c = 0 > b ? 0 : b, d = Math.floor(Math.log(a) / Math.log(1024)); return parseFloat((a / Math.pow(1024, d)).toFixed(c)) + " " + ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"][d] }
 
 
 

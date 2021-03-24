@@ -4,7 +4,7 @@ import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme, GlobalStyle } from "./components/Themes"
 import Main from './components/main'
 import styled from 'styled-components';
-import { Setting } from './components/Setting';
+import { Setting } from './components/Setting/Setting';
 import { AiFillSetting } from 'react-icons/ai';
 import {Container} from 'react-bootstrap'
 
