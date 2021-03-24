@@ -9,7 +9,7 @@ const DetailsReducer = (state: any, action: any) => {
       case 'updateDownloadPercent':
         let updatedList = state.map((item: any) => {
           if (item.url === action.data.url) {
-            return { ...item, downloadPercent: action.data.text };
+            return { ...item, downloadPercent: {text: action.data.text, percent: action.data.percent} };
           }
           return item;
         }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components';
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, ProgressBar, Spinner, Dropdown } from "react-bootstrap";
 import { BsDownload, BsPlayFill } from 'react-icons/bs'
 import { AiFillCloseCircle, AiOutlineLink } from 'react-icons/ai'
 import { ThemeContext } from "../App";
@@ -104,7 +104,10 @@ interface CardInterface {
         thumbnail: string,
         title: any,
         url: string,
-        downloadPercent: string,
+        downloadPercent: {
+            text: string,
+            percent: number
+        },
         videoquality: any
         savefile: string
 
@@ -178,12 +181,16 @@ const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
                                     </Select>
                                 </Colu>
 
-                                <Colu xs={3}>
+                                <Colu xs={4}>
                                     <Filesize>size : {formatBytes(ChangeQuality.filesize)}</Filesize>
                                 </Colu >
 
                                 <Colu xs={1}>
-                                    <Download aria-disabled={isDownloading} title='start download' type="button" onClick={starting_download} />
+                                    {
+                                        isDownloading ?
+                                            <Spinner animation="border" variant="primary" />
+                                            : <Download title='start download' type="button" onClick={starting_download} />
+                                    }
                                 </Colu>
                                 {
                                     data.savefile !== "" ? (
@@ -207,15 +214,31 @@ const Card = ({ UrlExist, data, handleRemoveItem, path }: CardInterface) => {
                                 <Colu xs={1}>
                                     <a target="_blank" rel="noopener noreferrer" href={data.url} ><View /></a>
                                 </Colu>
+                                <Colu xs={2}>
+                                    {
+                                        data.savefile !== "" ?
+                                            <Dropdown>
+                                                <Dropdown.Toggle variant="primary" size="sm" id="dropdown-basic"></Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    <Play aria-disabled={isDownloading} title='start download' type="button" onClick={() => window.eel.Open_Folder_or_file(data.savefile)} />
 
-                                <Colu xs={4}>
-                                    <p>{data.downloadPercent}</p>
+                                                    
+                                                </Dropdown.Menu>
+                                            </Dropdown> : null
+                                    }
                                 </Colu>
                             </Row>
                         </Col>
 
                     </Row>
                 </Col >
+            </Row>
+            <Row>
+                <Col>
+                    {
+                        <ProgressBar animated now={data.downloadPercent.percent} label={data.downloadPercent.text} />
+                    }
+                </Col>
             </Row>
         </CardDiv>
     )
