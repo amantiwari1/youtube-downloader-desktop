@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { ThemeContext } from "../App";
+import { ThemeContext } from "../../App";
 import { Col, Row } from "react-bootstrap";
 
 
