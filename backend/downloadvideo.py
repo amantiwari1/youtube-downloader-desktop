@@ -1,8 +1,10 @@
-import eel
-import requests
-from .function import format_filename  
 import os
+import requests
 import subprocess
+
+import eel
+
+from .function import format_filename  
 from .dbmanipulation import Update_savefile_In_Db
 
 
@@ -18,17 +20,18 @@ def Concatenate_Video_And_Audio(
 
 
 def Download_Video(data):
-
     send_proceess = eel.Set_Download_Percent
     url =data['url']
-
+    file_path = data['path']
+    file_ext = '.mp4'
+    file_name = format_filename(data['title']) + file_ext
     response = requests.get(data['urlvideo'], stream=True)
     if response.status_code == 200:
         videopath = start_download_video(
             url=url,
             filename=f'video.{data["ext"]}',
             urlvideo=data['urlvideo'],
-            path=data['path'],
+            path=file_path,
             send_proceess=send_proceess
         )
 
@@ -36,11 +39,11 @@ def Download_Video(data):
             url=url,
             filename='audio.m4a',
             urlvideo=data['audiourl'],
-            path=data['path'],
+            path=file_path,
             send_proceess=send_proceess
         )
 
-        fullpath = f'{data["path"]}/{format_filename(data["title"])}.mp4'
+        fullpath = os.path.sep.join([file_path, file_name])
         send_proceess({"text":"combining video and audio", "url": url,  "percent": 100 })
         Concatenate_Video_And_Audio(videopath, audiopath, fullpath)
 
@@ -52,7 +55,6 @@ def Download_Video(data):
 
         send_proceess({"text":"Successfull", "url": url,  "percent": 100 })
 
-
         try: 
             os.remove(audiopath)
             os.remove(videopath)
@@ -61,10 +63,9 @@ def Download_Video(data):
     else:
         send_proceess({"text":"This Url already expired please try add again", "url": url,  "percent": 0 })
 
-    
-def start_download_video(path, filename, urlvideo, url, send_proceess):
 
-    fullpath = f"{path}/{filename}"
+def start_download_video(path, filename, urlvideo, url, send_proceess):
+    fullpath = os.path.sep.join([path, filename])
     with open(fullpath, "wb") as f:
         response = requests.get(urlvideo, stream=True)
         response.status_code
@@ -92,3 +93,4 @@ def start_download_video(path, filename, urlvideo, url, send_proceess):
                     send_proceess({"text":"Sucessfull", "url": url, "percent": percent })
 
     return  fullpath
+
