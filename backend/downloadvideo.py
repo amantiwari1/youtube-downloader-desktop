@@ -48,7 +48,7 @@ def Download_Video(data):
         except:
             pass
     else:
-        send_proceess({"text":"This Url already expired please try add again", "url": url,  "percent": 0 })
+        send_proceess({"text":"This Url already expired please try add again", "url": url,  "percent": 100 })
 
     
 def start_download_video(path, filename, urlvideo, url, send_proceess):

@@ -41,7 +41,7 @@ def Get_All_Details():
 
 
 @eel.expose
-def DeleteVideo(url):
+def DeleteVideo(url: str) -> None:
     """
     this function is delete a video in sqlite3 through session 
     it will call this function by user tap remove icon in card Gui
@@ -51,7 +51,7 @@ def DeleteVideo(url):
     session.commit()
 
 @eel.expose
-def Add_Details(url):
+def Add_Details(url: str):
     """ This function is where to get all details in youtube in a video 
     through url and return all details in youtube to javascript
     """
@@ -69,21 +69,21 @@ def Add_Details(url):
 
 
 @eel.expose
-def Download_video(data):
+def Download_video(data: dict):
     """This function is used to download video to save video
     """
     downloadvideo.Download_Video(data)
 
 
 @eel.expose
-def Select_folder():
+def Select_folder() -> str:
     # show an "Open" dialog box and return the path to the selected file
     filename = sg.popup_get_folder('', no_window=True, keep_on_top=True)
     return filename
 
 
 @eel.expose
-def Get_Path_Folder():
+def Get_Path_Folder() -> str:
     path = 'data.json'
     if not os.path.isfile(path):
         folder.Generate_JSON()
@@ -92,12 +92,12 @@ def Get_Path_Folder():
 
 
 @eel.expose
-def Set_Path_Folder(fileaame):
-    folder.Set_Path_From_JSON(fileaame)
+def Set_Path_Folder(filename: str) -> None:
+    folder.Set_Path_From_JSON(filename)
 
 
 @eel.expose
-def Open_Folder_or_file(path):
+def Open_Folder_or_file(path: str) -> None:
     """
     This is folder where download and save file and 
     this function used for open floder 
@@ -106,7 +106,7 @@ def Open_Folder_or_file(path):
 
 
 @eel.expose
-def Get_Data_Details_Playlists(url):
+def Get_Data_Details_Playlists(url: str) -> list:
     """
     To get all video details in playlist to javascript
     """
@@ -130,7 +130,7 @@ def Get_Data_Details_Playlists(url):
     
 
 @eel.expose
-def All_Quality_Match(data):
+def All_Quality_Match(data: dict) -> list:
     """
     common quality in all video 
     """

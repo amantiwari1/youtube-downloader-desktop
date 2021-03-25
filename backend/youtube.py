@@ -12,7 +12,7 @@ urllib.request.urlretrieve is used for download along with url and formats
 
 
 class youtube:
-    def __init__(self, url, data=None):
+    def __init__(self, url: str, data=None) -> None:
         self.url = url
         self.data = data
         if data is None:
@@ -31,7 +31,7 @@ class youtube:
                 raise Exception(
                     'The playlist don\'t have videos or is wrong')
 
-    def Get_Data_Details(self):
+    def Get_Data_Details(self) -> dict:
         """Get the all detail of a video 
         and insert all details in  data.sqlite3 throgh session 
         """
@@ -47,7 +47,7 @@ class youtube:
             "savefile": "",
         }
 
-    def Get_Detail_Quality_Available(self):
+    def Get_Detail_Quality_Available(self) -> None:
         """get list of video quality
         return ['144p', '240p', '360p', '480p', '720p', 'tiny']"""
 
@@ -81,7 +81,7 @@ class youtube:
                 self.maps[format_note] = data
 
 
-def Get_Array_With_Playlist_Data(url_data):
+def Get_Array_With_Playlist_Data(url_data: dict) -> list:
     arr_data = []
     if len(url_data['entries']) != 0:
         for video_data in url_data["entries"]:
