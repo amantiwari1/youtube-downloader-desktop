@@ -6,6 +6,17 @@ import subprocess
 from .dbmanipulation import Update_savefile_In_Db
 
 
+def Concatenate_Video_And_Audio(
+        videopath,
+        audiopath,
+        finalpath,
+        videocodec='copy',
+        audiocodec='copy'):
+    ffmpeg_command = ['ffmpeg.exe',  '-y', '-i', videopath, '-i', audiopath, 
+        '-c:v', videocodec, '-c:a', audiocodec, finalpath]
+    subprocess.call(ffmpeg_command)
+
+
 def Download_Video(data):
 
     send_proceess = eel.Set_Download_Percent
@@ -31,7 +42,7 @@ def Download_Video(data):
 
         fullpath = f'{data["path"]}/{format_filename(data["title"])}.mp4'
         send_proceess({"text":"combining video and audio", "url": url,  "percent": 100 })
-        subprocess.call(f'ffmpeg.exe -y -i "{videopath}" -i "{audiopath}" -c:v copy -c:a aac "{fullpath}"')
+        Concatenate_Video_And_Audio(videopath, audiopath, fullpath)
 
         # save fullpath in db
         Update_savefile_In_Db(path=fullpath, url=url)
