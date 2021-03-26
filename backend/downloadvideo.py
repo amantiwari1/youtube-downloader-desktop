@@ -64,33 +64,29 @@ def Download_Video(data):
         send_proceess({"text":"This Url already expired please try add again", "url": url,  "percent": 100 })
 
 
-def start_download_video(path, filename, urlvideo, url, send_proceess):
+def send_percentage(percent, media_type, url, send_proceess):
+    description = "Downloding " + media_type + " " + str(percent) + "%"
+    send_proceess({"text":description, "url": url, "percent": percent })
+
+
+def start_download_video(path, filename, urlvideo, url, send_proceess, chunk=4096):
     fullpath = os.path.sep.join([path, filename])
-    with open(fullpath, "wb") as f:
-        response = requests.get(urlvideo, stream=True)
-        response.status_code
-        total_length = response.headers.get('content-length')
+    media = 'audio' if 'audio' in filename else 'video'
+    media_file = open(fullpath, "wb")
 
-        if total_length is None: # no content length header
-            f.write(response.content)
-        else:
-            dl = 0
-            total_length = int(total_length)
-            for data in response.iter_content(chunk_size=4096):
-                dl += len(data)
-                f.write(data)
-                percent= int(dl/total_length*100)
+    chunk_count = 0
+    response = requests.get(urlvideo, stream=True)
+    total_length = int(response.headers.get('content-length'))
 
-                name = ""
+    for data in response.iter_content(chunk_size=chunk):
+        media_file.write(data)
+        percent_fraction = (chunk_count * chunk) / total_length 
+        percent= int(percent_fraction * 100)
+        chunk_count += 1
+        send_percentage(percent, media, url, send_proceess)
 
-                if filename == 'audio.m4a':
-                    name= "Downloding audio..."
-                else:
-                    name= "Downloding video..."
-
-                send_proceess({"text":name, "url": url, "percent": percent })
-                if percent >= 100:
-                    send_proceess({"text":"Sucessfull", "url": url, "percent": percent })
-
+    media_file.close()
+    send_proceess({"text":"Sucessfull", "url": url, "percent": 100})
     return  fullpath
+
 
