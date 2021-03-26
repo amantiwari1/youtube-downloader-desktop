@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from 'react'
 import { Col, Row, ProgressBar, Spinner, Dropdown } from "react-bootstrap";
 import { ThemeContext } from "../../App";
 import { CardInterface } from './CardInterface'
-import { CardDiv, Thumbnail, Colu, Select, Filesize, Download, Play, View, Close } from './CardStyle'
+import { CardDiv, Thumbnail, Colu, Select, Filesize, Download, Play, View, Close, DropdownToggle } from './CardStyle'
 import formatBytes from '../utils/formatBytes'
 
-const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
+const Card = ({ data, handleRemoveItem, path }: CardInterface) => { 
 
 
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "", ext: "" })
@@ -100,11 +100,9 @@ const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
                                     {
                                         data.savefile !== "" ?
                                             <Dropdown>
-                                                <Dropdown.Toggle variant="primary" size="sm" id="dropdown-basic"></Dropdown.Toggle>
+                                                <DropdownToggle variant="primary" id="dropdown-basic"></DropdownToggle>
                                                 <Dropdown.Menu>
                                                     <Play aria-disabled={isDownloading} title='start download' type="button" onClick={() => window.eel.Open_Folder_or_file(data.savefile)} />
-
-
                                                 </Dropdown.Menu>
                                             </Dropdown> : null
                                     }

@@ -2,13 +2,13 @@ import re
 import string
 from urllib.parse import urlparse
 import socket
+from typing import List
 
-
-def atoi(text):
+def atoi(text: str) -> int:
         return int(text) if text.isdigit() else text
 
 
-def natural_keys(text):
+def natural_keys(text: str) -> List[str]:
     """
     this function used for sorted in string along with number
     
@@ -25,7 +25,7 @@ def natural_keys(text):
     return [atoi(c) for c in re.split('(\d+)', text)]
 
 
-def format_filename(s):
+def format_filename(s: str) -> str:
     """Take a string and return a valid filename constructed from the string.
 Uses a whitelist approach: any characters not present in valid_chars are
 removed. Also spaces are replaced with underscores.
@@ -43,17 +43,7 @@ an invalid filename.
         .replace(' ', '_'))
     return filename_without_invalid_chars
 
-
-def Check_Url(url):
-    """check url is vaild or not"""
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        return False
-
-
-def is_connected():
+def is_connected() -> bool:
     try:
         # connect to the host -- tells us if the host is actually
         # reachable

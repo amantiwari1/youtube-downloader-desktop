@@ -2,7 +2,7 @@ import os
 import json
 
 
-def Generate_JSON():
+def Generate_JSON() -> None:
     user_home = os.path.expanduser("~")
     path = os.path.sep.join([user_home, 'Downloads', 'video'])
     if not os.path.isdir(path):
@@ -12,13 +12,13 @@ def Generate_JSON():
         json.dump(data, json_file)
 
 
-def Get_Path_From_JSON():
+def Get_Path_From_JSON() -> None:
     with open("data.json", "r") as jsonFile:
         data = json.load(jsonFile)
     return data["path"]
 
 
-def Set_Path_From_JSON(filename):
+def Set_Path_From_JSON(filename: str) -> None:
     with open("data.json", "r") as jsonFile:
         data = json.load(jsonFile)
     
