@@ -1,1 +1,1 @@
-python -m eel main.py build --onedir  --console --noconfirm --add-data ".\ffmpeg.exe;."
+python -m eel main.py build --onedir  --console --noconfirm --add-data ".\ffmpeg.exe;." --hidden-import=sqlalchemy.sql.default_comparator
