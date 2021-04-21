@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { ThemeContext } from "../../App";
-import { Col, Row } from "react-bootstrap";
-
+import tw from "twin.macro"
 
 const PathCompoment = () => {
   const { state, dispatch } = useContext(ThemeContext)
@@ -26,19 +25,11 @@ const PathCompoment = () => {
   
 
   return (
-    <Row>
-
-      <Col xs={4} >
+    <div tw="flex space-x-10 items-center">
         <label>Save a video</label>
-      </Col>
-      <Col xs={4} >
         <p>{state.Path}</p>
-      </Col>
-      <Col xs={4} >
         <button disabled={isSelect} onClick={Select_folder} >Change Path</button>
-      </Col>
-
-    </Row>
+    </div>
   ) 
 }
 

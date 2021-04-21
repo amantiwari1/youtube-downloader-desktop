@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { ThemeContext } from "../../App";
-import { TextArea, Add, Colu, Rowu } from './InputStyle'
+import { TextArea, Add} from './InputStyle'
+import tw from "twin.macro"
 
 
 const Input = () => {
@@ -126,31 +127,27 @@ const Input = () => {
 
 
     return (
-        <Rowu>
-            <Colu xs={9} >
-                <TextArea
-                    placeholder="Enter multiple url youtube video"
-                    rows={3}
-                    onChange={() => {
-                        dispatch({ type: 'isError', data: { isError: false, text: '' } });
-                    }}
-                />
-            </Colu>
-            <Colu xs={3}>
-                <Add
-                    type="button"
-                    onClick={() => {
-                        let textarea = document.querySelector('textarea')
-                        if (textarea) {
-                            Get_Detail(textarea.value)
-                            textarea.value = ''
-                        }
-                    }}
-                >
-                    Add
+        <div tw="flex flex-wrap justify-center " >
+            <TextArea
+                placeholder="Enter multiple url youtube video"
+                rows={3}
+                onChange={() => {
+                    dispatch({ type: 'isError', data: { isError: false, text: '' } });
+                }}
+            />
+            <Add
+                type="button"
+                onClick={() => {
+                    let textarea = document.querySelector('textarea')
+                    if (textarea) {
+                        Get_Detail(textarea.value)
+                        textarea.value = ''
+                    }
+                }}
+            >
+                Add
                 </Add>
-            </Colu>
-        </Rowu>
+        </div>
     )
 }
 

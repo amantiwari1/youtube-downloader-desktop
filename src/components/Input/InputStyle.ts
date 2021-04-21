@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Col, Row } from "react-bootstrap";
 
 const TextArea = styled.textarea`
   font-size: 13px;
@@ -7,7 +6,7 @@ const TextArea = styled.textarea`
   text-align: center;
   border: none;
   border-radius: 10px;
-  width: 100%;
+  width: 32rem;
   &:hover,
   &:focus {
     outline: none;
@@ -38,9 +37,9 @@ const TextArea = styled.textarea`
   }
 `;
 const Add = styled.button`
-  width: 100%;
-  width: 100%;
   height: 60px;
+  width: 6rem;
+  margin-top: 10px;
   border-radius: 40px;
   color: #ffffff;
   background-color: #000;
@@ -53,12 +52,4 @@ const Add = styled.button`
   margin-left: 7px;
 `;
 
-const Colu = styled(Col)`
-  padding: 1px;
-  z-index: 0;
-`;
-
-const Rowu = styled(Row)`
-  margin: 0;
-`;
-export { TextArea, Add, Colu, Rowu };
+export { TextArea, Add};

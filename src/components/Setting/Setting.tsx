@@ -2,8 +2,9 @@ import React, { useEffect, useCallback, useContext } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { PathCompoment } from '../Path/Path'
 import { ThemeContext } from '../../App'
-import { BsToggleOff, BsToggleOn } from 'react-icons/bs';
-import { Background, ModalContent, ModalWrapper, CloseModalButton, Colu, Rowu } from './SettingStyle'
+import { Background, ModalWrapper, CloseModalButton } from './SettingStyle'
+import Toggle from '../../themes/themeToggle';
+import tw from "twin.macro"
 
 export const Setting = () => {
 
@@ -23,7 +24,7 @@ export const Setting = () => {
     const keyPress = useCallback(
         e => {
             if (e.key === 'Escape' && state.showModal) {
-                dispatch({type: 'showModalFalse'})
+                dispatch({ type: 'showModalFalse' })
             }
         },
         [dispatch, state.showModal]
@@ -46,29 +47,14 @@ export const Setting = () => {
                     <Background>
                         <animated.div style={animation}>
                             <ModalWrapper >
-                                <ModalContent>
-                                    <Rowu>
-
-                                        <Colu xs={12}>
-                                            <CloseModalButton onClick={() => dispatch({type: 'showModal'})} />
-                                        </Colu>
-
-                                        <Colu xs={12}>
-                                            <PathCompoment />
-                                        </Colu>
-
-                                        <Colu xs={4}>
+                                    <div tw="flex flex-col space-y-4 space-x-4" >
+                                        <CloseModalButton onClick={() => dispatch({ type: 'showModal' })} />
+                                        <PathCompoment />
+                                        <div tw="flex space-x-10 items-center" >
                                             <p>Dark Mode</p>
-                                        </Colu>
-
-                                        <Colu xs={8}>
-                                            {
-                                                state.theme === 'light' ? <BsToggleOff onClick={() => dispatch({type:'theme'}) }></BsToggleOff> : <BsToggleOn onClick={() => dispatch({type:'theme'})}></BsToggleOn>
-                                            }
-                                        </Colu>
-                                        
-                                    </Rowu>
-                                </ModalContent>
+                                            <Toggle />
+                                        </div>
+                                    </div>
                             </ModalWrapper>
                         </animated.div>
                     </Background >

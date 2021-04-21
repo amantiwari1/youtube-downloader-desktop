@@ -1,17 +1,7 @@
 import {  Col, Row } from "react-bootstrap";
 import { IoMdArrowRoundBack } from 'react-icons/io';
 import styled from 'styled-components';
-
-export const Colu = styled(Col)`
-
-    
-
-`
-
-export const Rowu = styled(Row)`
-  margin: 0;
-`
-
+import tw from "twin.macro"
 
 
 export const Background = styled.div`
@@ -19,22 +9,20 @@ export const Background = styled.div`
   height: 100%;
   position: fixed;
   z-index: 10;
-
-  margin-left: -15px;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  ${tw`bg-lightmode dark:(bg-darkmode)`}
 `;
 
 export const ModalWrapper = styled.div`
-    width: 100%;
+  width: 100%;
   min-height: 100vh;
-  background: ${props => props.theme.background};
-  color: ${props => props.theme.textColor};
   position: relative;   
   z-index: 10;
+  ${tw`mx-auto max-w-2xl pt-3`}
 `;
 
-export const ModalContent = styled.div`  
-  color: ${props => props.theme.textColor};
-`;
 
 export const CloseModalButton = styled(IoMdArrowRoundBack)`
   cursor: pointer;
