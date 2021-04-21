@@ -4,8 +4,9 @@ import { ThemeContext } from "../../App";
 import { CardInterface } from './CardInterface'
 import { CardDiv, Thumbnail, Colu, Select, Filesize, Download, Play, View, Close, DropdownToggle } from './CardStyle'
 import formatBytes from '../utils/formatBytes'
+import tw from "twin.macro"
 
-const Card = ({ data, handleRemoveItem, path }: CardInterface) => { 
+const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
 
 
     const [ChangeQuality, setChangeQuality] = useState({ video_url: "", filesize: 0, quality: "", ext: "" })
@@ -37,89 +38,63 @@ const Card = ({ data, handleRemoveItem, path }: CardInterface) => {
 
     return (
         <CardDiv>
-            <Row>
+            <div tw="grid grid-cols-6 space-x-2" >
 
-                <Col xs={3}>
-                    <Thumbnail src={data.thumbnail} alt={data.title} />
-                </Col>
+                <Thumbnail src={data.thumbnail} alt={data.title} />
 
-                <Col xs={9}>
+                <div tw="flex flex-col  col-span-5 space-y-3 p-3" >
 
-                    <Row>
-                        <Col xs={12}>
-                            <p>{data.title}</p>
-                        </Col>
-                        <Col xs={12}>
-                            <Row>
-                                <Colu xs={2}>
-                                    <Select value={ChangeQuality.quality} onChange={e => ChangeQualityHandle(e.target.value)}>
-                                        {
+                    <p >{data.title}</p>
+                    <div tw="flex flex-wrap space-x-4" >
+                        <Select tw="w-24" value={ChangeQuality.quality} onChange={e => ChangeQualityHandle(e.target.value)}>
+                            {
 
-                                            Object.keys(data.videoquality).map((quality: string) => (
-                                                <option key={quality} >{quality}</option>
-                                            ))
+                                Object.keys(data.videoquality).map((quality: string) => (
+                                    <option key={quality} >{quality}</option>
+                                ))
 
-                                        }
-                                    </Select>
-                                </Colu>
+                            }
+                        </Select>
 
-                                <Colu xs={4}>
-                                    <Filesize>size : {formatBytes(ChangeQuality.filesize)}</Filesize>
-                                </Colu >
+                        <Filesize>size : {formatBytes(ChangeQuality.filesize)}</Filesize>
 
+                        {
+                            isDownloading ?
+                                <Spinner animation="border" variant="primary" />
+                                : <Download title='start download' type="button" onClick={starting_download} />
+                        }
+                        {
+                            data.savefile !== "" ? (
                                 <Colu xs={1}>
-                                    {
-                                        isDownloading ?
-                                            <Spinner animation="border" variant="primary" />
-                                            : <Download title='start download' type="button" onClick={starting_download} />
-                                    }
+                                    <Play aria-disabled={isDownloading} title='start download' type="button" onClick={() => window.eel.Open_Folder_or_file(data.savefile)} />
                                 </Colu>
-                                {
-                                    data.savefile !== "" ? (
-                                        <Colu xs={1}>
-                                            <Play aria-disabled={isDownloading} title='start download' type="button" onClick={() => window.eel.Open_Folder_or_file(data.savefile)} />
-                                        </Colu>
-                                    ) : null
-                                }
+                            ) : null
+                        }
 
+                        <a target="_blank" rel="noopener noreferrer" href={data.url} ><View /></a>
 
-                                <Colu xs={1}>
-                                    <Close onClick={() => {
-                                        handleRemoveItem({ name: data.title, type: 'remove' });
+                        <Close onClick={() => {
+                            handleRemoveItem({ name: data.title, type: 'remove' });
+                            window.eel.DeleteVideo(data.url)
+                            dispatch({ type: 'removeUrlExist', data: data.url })
+                        }} />
 
-                                        window.eel.DeleteVideo(data.url)
-                                        dispatch({ type: 'removeUrlExist', data: data.url })
+                        {
+                            data.savefile !== "" ?
+                                <Dropdown>
+                                    <DropdownToggle variant="primary" id="dropdown-basic"></DropdownToggle>
+                                    <Dropdown.Menu>
+                                        <Play aria-disabled={isDownloading} title='start download' type="button" onClick={() => window.eel.Open_Folder_or_file(data.savefile)} />
+                                    </Dropdown.Menu>
+                                </Dropdown> : null
+                        }
+                    </div>
 
-                                    }}>Remove</Close>
-                                </Colu>
-
-                                <Colu xs={1}>
-                                    <a target="_blank" rel="noopener noreferrer" href={data.url} ><View /></a>
-                                </Colu>
-                                <Colu xs={2}>
-                                    {
-                                        data.savefile !== "" ?
-                                            <Dropdown>
-                                                <DropdownToggle variant="primary" id="dropdown-basic"></DropdownToggle>
-                                                <Dropdown.Menu>
-                                                    <Play aria-disabled={isDownloading} title='start download' type="button" onClick={() => window.eel.Open_Folder_or_file(data.savefile)} />
-                                                </Dropdown.Menu>
-                                            </Dropdown> : null
-                                    }
-                                </Colu>
-                            </Row>
-                        </Col>
-
-                    </Row>
-                </Col >
-            </Row>
-            <Row>
-                <Col>
-                    {
-                        <ProgressBar animated now={data.downloadPercent.percent} label={data.downloadPercent.text} />
-                    }
-                </Col>
-            </Row>
+                </div >
+            </div>
+            <div>
+                <ProgressBar animated now={data.downloadPercent.percent} label={data.downloadPercent.text} />
+            </div>
         </CardDiv>
     )
 }
